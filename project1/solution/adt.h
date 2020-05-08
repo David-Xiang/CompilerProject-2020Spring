@@ -70,7 +70,7 @@ public:
 
 class AListNode {
 public:
-    vector<IdExprNode> idExprList;
+    vector<IdExprNode*> idExprList;
 };
 
 class CListNode {
@@ -81,14 +81,14 @@ public:
 class SRefNode {
 public:
     int paramterIndex;
-    CListNode cListNode;
+    CListNode* cListNode;
 };
 
 class TRefNode {
 public:
     int paramterIndex;
-    CListNode cListNode;
-    AListNode aListNode;
+    CListNode* cListNode;
+    AListNode* aListNode;
 };
 
 class RHSNode {
@@ -96,27 +96,27 @@ public:
     RHSType type;           // binary, uniary, tref, sref, constref
     RHSNode* lnode;         // binary, uniary有效，除了根RHS外，其他指针需要手动释放
     RHSNode* rnode;         // binary有效，除了根RHS外，其他指针需要手动释放
-    TRefNode tRefNode;      // tref有效
-    SRefNode sRefNode;      // sref有效
-    ConstNode constNode;    // constref有效
+    TRefNode* tRefNode;      // tref有效
+    SRefNode* sRefNode;      // sref有效
+    ConstNode* constNode;    // constref有效
     Operation op;           // binary有效
 };
 
 class LHSNode {
 public:
-    TRefNode tRefNode;
+    TRefNode* tRefNode;
 };
 
 class StmtNode {
 public:
     vector<Variable> variables;     // 循环变量名称以及取值上下界
-    LHSNode lhsNode;
-    RHSNode rhsNode;
+    LHSNode* lhsNode;
+    RHSNode* rhsNode;
 };
 
 class RootNode {
 public:
-    vector<StmtNode> stmtNodes;
+    vector<StmtNode*> stmtNodes;
 };
 
 #endif
