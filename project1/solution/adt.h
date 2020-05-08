@@ -16,7 +16,7 @@ class TRefNode;
 class SRefNode;
 class ConstNode;
 class CListNode;        // 表示张量形状
-class AListNode;        // 表示位置参数，需要带范围 => a
+class AListNode;        // 表示位置参数，需要带范围
 class IdExprNode;       // 在数组下标中出现的表达式，每个下标仅仅需要完整表达式string即可，无需进一步解析语法
 
 enum Operation{
