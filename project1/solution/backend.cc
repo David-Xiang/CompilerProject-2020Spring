@@ -94,7 +94,7 @@ string get_op_string(Operation op) {
     case Operation::times: return "*";
     case Operation::divide: return "/";
     case Operation::mod: return "%";
-    case Operation::floor_divide: return "UNFINISHED"; // TODO
+    case Operation::floor_divide: return "/";
     default:return "ERROR";
     }
 }
