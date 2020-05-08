@@ -51,7 +51,7 @@ string gen_body(Env& env, RootNode& root) {
     ostringstream oss;
     
     for (int i = 0; i < root.stmtNodes.size(); i++) {
-        oss << gen_loop(env, root.stmtNodes[i], 0);
+        oss << gen_loop(env, *(root.stmtNodes[i]), 0);
     }
 
     return oss.str();
@@ -75,13 +75,13 @@ string gen_loop(Env& env, StmtNode& stmt, int loop) {
         oss << gen_loop(env, stmt, loop + 1);
     } else {
         oss << indent << one_tab;
-        oss << env.tensors[stmt.lhsNode.tRefNode.paramterIndex].name;
-        vector<IdExprNode> & lhsIdExprList = stmt.lhsNode.tRefNode.aListNode.idExprList;
+        oss << env.tensors[stmt.lhsNode->tRefNode->paramterIndex].name;
+        vector<IdExprNode*> & lhsIdExprList = stmt.lhsNode->tRefNode->aListNode->idExprList;
         for (int i = 0; i < lhsIdExprList.size(); i++) {
-            string expr = lhsIdExprList[i].expr;
+            string expr = lhsIdExprList[i]->expr;
             oss << "[" << expr << "]";
         }
-        oss << " = " << gen_rhs(env, stmt.rhsNode) << ";" << endl;
+        oss << " = " << gen_rhs(env, *(stmt.rhsNode)) << ";" << endl;
     }
     oss << indent << "}" << endl;
     return oss.str();
@@ -106,11 +106,11 @@ string gen_rhs(Env& env, RHSNode& rhsNode) {
     case RHSType::uniary:
         return "(" + gen_rhs(env, *(rhsNode.lnode)) + ")";
     case RHSType::tref:
-        return gen_tref(env, rhsNode.tRefNode);
+        return gen_tref(env, *(rhsNode.tRefNode));
     case RHSType::sref:
-        return gen_sref(env, rhsNode.sRefNode);
+        return gen_sref(env, *(rhsNode.sRefNode));
     case RHSType::constref:
-        return rhsNode.constNode.isInt ? to_string(rhsNode.constNode.intVal) : to_string(rhsNode.constNode.floatVal);
+        return rhsNode.constNode->isInt ? to_string(rhsNode.constNode->intVal) : to_string(rhsNode.constNode->floatVal);
     default:
         cout << "ERROR" << endl;
         break;
@@ -119,10 +119,10 @@ string gen_rhs(Env& env, RHSNode& rhsNode) {
 
 string gen_tref(Env& env, TRefNode& tRefNode) {
     ostringstream oss;
-    vector<IdExprNode> & idExprList = tRefNode.aListNode.idExprList;
+    vector<IdExprNode*> & idExprList = tRefNode.aListNode->idExprList;
     oss << env.tensors[tRefNode.paramterIndex].name;
     for (int i = 0; i < idExprList.size(); i++) {
-        string expr = idExprList[i].expr;
+        string expr = idExprList[i]->expr;
         oss << "[" << expr << "]";
     }
     return oss.str();

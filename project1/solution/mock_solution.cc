@@ -84,39 +84,53 @@ void mock_env_example(Env& env) {
 }
 
 void mock_root_example(RootNode& root){
-    StmtNode stmtNode;
-    LHSNode lhsNode;
-    RHSNode rhsNode;
-    IdExprNode i, j;
-    i.variableIndices.push_back(0);
-    i.expr = "i";
-    j.variableIndices.push_back(1);
-    j.expr = "j";
+    StmtNode* stmtNode = new StmtNode();
+    LHSNode* lhsNode = new LHSNode();
+    RHSNode* rhsNode = new RHSNode();
+    IdExprNode *i = new IdExprNode();
+    IdExprNode *j = new IdExprNode();
+    i->variableIndices.push_back(0);
+    i->expr = "i";
+    j->variableIndices.push_back(1);
+    j->expr = "j";
 
     // 构造左部
-    TRefNode tRefNode;
-    tRefNode.paramterIndex = 2; // A
-    tRefNode.cListNode.shape.push_back(32);
-    tRefNode.cListNode.shape.push_back(16);
-    tRefNode.aListNode.idExprList.push_back(i);
-    tRefNode.aListNode.idExprList.push_back(j);
-    lhsNode.tRefNode = tRefNode;
-
+    lhsNode->tRefNode = new TRefNode();
+    lhsNode->tRefNode->paramterIndex = 2; // A
+    lhsNode->tRefNode->cListNode = new CListNode();
+    lhsNode->tRefNode->cListNode->shape.push_back(32);
+    lhsNode->tRefNode->cListNode->shape.push_back(16);
+    lhsNode->tRefNode->aListNode = new AListNode();
+    lhsNode->tRefNode->aListNode->idExprList.push_back(i);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(j);
+    
     // 构造右部
-    rhsNode.type = RHSType::binary;
-    rhsNode.op = Operation::times;
+    rhsNode->type = RHSType::binary;
+    rhsNode->op = Operation::times;
 
     RHSNode* node1 = new RHSNode();
     RHSNode* node2 = new RHSNode();
-    tRefNode.paramterIndex = 1;  // C
     node1->type = RHSType::tref;
-    node1->tRefNode = tRefNode;
-    tRefNode.paramterIndex = 0; // B
     node2->type = RHSType::tref;
-    node2->tRefNode = tRefNode;
+    node1->tRefNode = new TRefNode();
+    node1->tRefNode->paramterIndex = 1;  // C
+    node1->tRefNode->cListNode = new CListNode();
+    node1->tRefNode->cListNode->shape.push_back(32);
+    node1->tRefNode->cListNode->shape.push_back(16);
+    node1->tRefNode->aListNode = new AListNode();
+    node1->tRefNode->aListNode->idExprList.push_back(i);
+    node1->tRefNode->aListNode->idExprList.push_back(j);
+    node2->tRefNode = new TRefNode();
+    node2->tRefNode->paramterIndex = 0;  // B
+    node2->tRefNode->cListNode = new CListNode();
+    node2->tRefNode->cListNode->shape.push_back(32);
+    node2->tRefNode->cListNode->shape.push_back(16);
+    node2->tRefNode->aListNode = new AListNode();
+    node2->tRefNode->aListNode->idExprList.push_back(i);
+    node2->tRefNode->aListNode->idExprList.push_back(j);
 
-    rhsNode.lnode = node1;
-    rhsNode.rnode = node2;
+    rhsNode->lnode = node1;
+    rhsNode->rnode = node2;
 
     Variable vi, vj;
     vi.name = "i";
@@ -125,11 +139,11 @@ void mock_root_example(RootNode& root){
     vj.name = "j";
     vj.lowerBound = 0;
     vj.upperBound = 16;
-    stmtNode.variables.push_back(vi);
-    stmtNode.variables.push_back(vj);
+    stmtNode->variables.push_back(vi);
+    stmtNode->variables.push_back(vj);
 
-    stmtNode.lhsNode = lhsNode;
-    stmtNode.rhsNode = rhsNode;
+    stmtNode->lhsNode = lhsNode;
+    stmtNode->rhsNode = rhsNode;
     root.stmtNodes.push_back(stmtNode);
 }
 
@@ -147,30 +161,31 @@ void mock_env_case1(Env& env) {
 }
 
 void mock_root_case1(RootNode& root){
-    StmtNode stmtNode;
-    LHSNode lhsNode;
-    RHSNode rhsNode;
-    IdExprNode i, j;
-    i.variableIndices.push_back(0);
-    i.expr = "i";
-    j.variableIndices.push_back(1);
-    j.expr = "j";
+    StmtNode* stmtNode = new StmtNode();
+    LHSNode* lhsNode = new LHSNode();
+    RHSNode* rhsNode = new RHSNode();
+    IdExprNode *i = new IdExprNode();
+    IdExprNode *j = new IdExprNode();
+    i->variableIndices.push_back(0);
+    i->expr = "i";
+    j->variableIndices.push_back(1);
+    j->expr = "j";
 
     // 构造左部
-    TRefNode tRefNode;
-    tRefNode.paramterIndex = 0; // A
-    tRefNode.cListNode.shape.push_back(32);
-    tRefNode.cListNode.shape.push_back(16);
-    tRefNode.aListNode.idExprList.push_back(i);
-    tRefNode.aListNode.idExprList.push_back(j);
-    lhsNode.tRefNode = tRefNode;
+    lhsNode->tRefNode = new TRefNode();
+    lhsNode->tRefNode->paramterIndex = 0; // A
+    lhsNode->tRefNode->cListNode = new CListNode();
+    lhsNode->tRefNode->cListNode->shape.push_back(32);
+    lhsNode->tRefNode->cListNode->shape.push_back(16);
+    lhsNode->tRefNode->aListNode = new AListNode();
+    lhsNode->tRefNode->aListNode->idExprList.push_back(i);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(j);
 
     // 构造右部
-    rhsNode.type = RHSType::constref;
-    ConstNode constNode;
-    constNode.isInt = true;
-    constNode.intVal = 2;
-    rhsNode.constNode = constNode;
+    rhsNode->type = RHSType::constref;
+    rhsNode->constNode = new ConstNode();
+    rhsNode->constNode->isInt = true;
+    rhsNode->constNode->intVal = 2;
 
     Variable vi, vj;
     vi.name = "i";
@@ -179,11 +194,11 @@ void mock_root_case1(RootNode& root){
     vj.name = "j";
     vj.lowerBound = 0;
     vj.upperBound = 16;
-    stmtNode.variables.push_back(vi);
-    stmtNode.variables.push_back(vj);
+    stmtNode->variables.push_back(vi);
+    stmtNode->variables.push_back(vj);
 
-    stmtNode.lhsNode = lhsNode;
-    stmtNode.rhsNode = rhsNode;
+    stmtNode->lhsNode = lhsNode;
+    stmtNode->rhsNode = rhsNode;
     root.stmtNodes.push_back(stmtNode);
 }
 
@@ -209,33 +224,43 @@ void mock_env_case4(Env& env) {
 }
 
 void mock_root_case4(RootNode& root){
-    StmtNode stmtNode;
-    LHSNode lhsNode;
-    RHSNode rhsNode;
-    IdExprNode i, j, k;
-    i.variableIndices.push_back(0);
-    i.expr = "i";
-    j.variableIndices.push_back(1);
-    j.expr = "j";
-    k.variableIndices.push_back(2);
-    k.expr = "k";
+    StmtNode* stmtNode = new StmtNode();
+    LHSNode* lhsNode = new LHSNode();
+    RHSNode* rhsNode = new RHSNode();
+    IdExprNode *i = new IdExprNode();
+    IdExprNode *j = new IdExprNode();
+    IdExprNode *k = new IdExprNode();
+    i->variableIndices.push_back(0);
+    i->expr = "i";
+    j->variableIndices.push_back(1);
+    j->expr = "j";
+    k->variableIndices.push_back(2);
+    k->expr = "k";
 
     // 构造左部
-    TRefNode tRefNode;
-    tRefNode.paramterIndex = 2; // A
-    tRefNode.cListNode.shape.push_back(16);
-    tRefNode.cListNode.shape.push_back(32);
-    tRefNode.aListNode.idExprList.push_back(i);
-    tRefNode.aListNode.idExprList.push_back(j);
-    lhsNode.tRefNode = tRefNode;
+    lhsNode->tRefNode = new TRefNode();
+    lhsNode->tRefNode->paramterIndex = 2; // A
+    lhsNode->tRefNode->cListNode = new CListNode();
+    lhsNode->tRefNode->cListNode->shape.push_back(16);
+    lhsNode->tRefNode->cListNode->shape.push_back(32);
+    lhsNode->tRefNode->aListNode = new AListNode();
+    lhsNode->tRefNode->aListNode->idExprList.push_back(i);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(j);
 
     // 构造右部
-    rhsNode.type = RHSType::binary;
-    rhsNode.op = Operation::plus;
+    rhsNode->type = RHSType::binary;
+    rhsNode->op = Operation::plus;
 
     RHSNode* node1 = new RHSNode(); // A<16, 32>[i, j]
     node1->type = RHSType::tref;
-    node1->tRefNode = tRefNode;
+    node1->tRefNode = new TRefNode();
+    node1->tRefNode->paramterIndex = 2; // A
+    node1->tRefNode->cListNode = new CListNode();
+    node1->tRefNode->cListNode->shape.push_back(16);
+    node1->tRefNode->cListNode->shape.push_back(32);
+    node1->tRefNode->aListNode = new AListNode();
+    node1->tRefNode->aListNode->idExprList.push_back(i);
+    node1->tRefNode->aListNode->idExprList.push_back(j);
 
 
     RHSNode* node2 = new RHSNode();
@@ -244,23 +269,29 @@ void mock_root_case4(RootNode& root){
     RHSNode* node3 = new RHSNode(); // B<16, 32>[i, k]
     RHSNode* node4 = new RHSNode(); // C<32, 32>[k, j]
     node3->type = RHSType::tref;
-    node3->tRefNode.paramterIndex = 0; // B
-    node3->tRefNode.cListNode.shape.push_back(16);
-    node3->tRefNode.cListNode.shape.push_back(32);
-    node3->tRefNode.aListNode.idExprList.push_back(i);
-    node3->tRefNode.aListNode.idExprList.push_back(k);
+    node3->tRefNode = new TRefNode();
+    node3->tRefNode->paramterIndex = 0; // B
+    node3->tRefNode->cListNode = new CListNode();
+    node3->tRefNode->cListNode->shape.push_back(16);
+    node3->tRefNode->cListNode->shape.push_back(32);
+    node3->tRefNode->aListNode = new AListNode();
+    node3->tRefNode->aListNode->idExprList.push_back(i);
+    node3->tRefNode->aListNode->idExprList.push_back(k);
     node4->type = RHSType::tref;
-    node4->tRefNode.paramterIndex = 1; // C
-    node4->tRefNode.cListNode.shape.push_back(32);
-    node4->tRefNode.cListNode.shape.push_back(32);
-    node4->tRefNode.aListNode.idExprList.push_back(k);
-    node4->tRefNode.aListNode.idExprList.push_back(j);
+    node4->tRefNode = new TRefNode();
+    node4->tRefNode->paramterIndex = 1; // C
+    node4->tRefNode->cListNode = new CListNode();
+    node4->tRefNode->cListNode->shape.push_back(32);
+    node4->tRefNode->cListNode->shape.push_back(32);
+    node4->tRefNode->aListNode = new AListNode();
+    node4->tRefNode->aListNode->idExprList.push_back(k);
+    node4->tRefNode->aListNode->idExprList.push_back(j);
 
     node2->lnode = node3;
     node2->rnode = node4;
 
-    rhsNode.lnode = node1;
-    rhsNode.rnode = node2;
+    rhsNode->lnode = node1;
+    rhsNode->rnode = node2;
 
     Variable vi, vj, vk;
     vi.name = "i";
@@ -272,12 +303,12 @@ void mock_root_case4(RootNode& root){
     vk.name = "k";
     vk.lowerBound = 0;
     vk.upperBound = 32;
-    stmtNode.variables.push_back(vi);
-    stmtNode.variables.push_back(vj);
-    stmtNode.variables.push_back(vk);
+    stmtNode->variables.push_back(vi);
+    stmtNode->variables.push_back(vj);
+    stmtNode->variables.push_back(vk);
 
-    stmtNode.lhsNode = lhsNode;
-    stmtNode.rhsNode = rhsNode;
+    stmtNode->lhsNode = lhsNode;
+    stmtNode->rhsNode = rhsNode;
     root.stmtNodes.push_back(stmtNode);
 }
 
@@ -313,30 +344,44 @@ void mock_env_case5(Env& env) {
 }
 
 void mock_root_case5(RootNode& root){
-    StmtNode stmtNode1, stmtNode2;
-    LHSNode lhsNode;
-    RHSNode rhsNode1, rhsNode2;
-    IdExprNode i, j, k;
-    i.variableIndices.push_back(0);
-    i.expr = "i";
-    j.variableIndices.push_back(1);
-    j.expr = "j";
-    k.variableIndices.push_back(2);
-    k.expr = "k";
+    StmtNode* stmtNode1 = new StmtNode();
+    StmtNode* stmtNode2 = new StmtNode();
+    LHSNode* lhsNode = new LHSNode();
+    RHSNode* rhsNode1 = new RHSNode();
+    RHSNode* rhsNode2 = new RHSNode();
+    IdExprNode *i = new IdExprNode();
+    IdExprNode *j = new IdExprNode();
+    IdExprNode *k = new IdExprNode();
+    i->variableIndices.push_back(0);
+    i->expr = "i";
+    j->variableIndices.push_back(1);
+    j->expr = "j";
+    k->variableIndices.push_back(2);
+    k->expr = "k";
 
     // stmtNode1
-    lhsNode.tRefNode.paramterIndex = 5; // A
-    lhsNode.tRefNode.cListNode.shape.push_back(16);
-    lhsNode.tRefNode.cListNode.shape.push_back(32);
-    lhsNode.tRefNode.aListNode.idExprList.push_back(i);
-    lhsNode.tRefNode.aListNode.idExprList.push_back(j);
+    lhsNode->tRefNode = new TRefNode();
+    lhsNode->tRefNode->paramterIndex = 5; // A
+    lhsNode->tRefNode->cListNode = new CListNode();
+    lhsNode->tRefNode->cListNode->shape.push_back(16);
+    lhsNode->tRefNode->cListNode->shape.push_back(32);
+    lhsNode->tRefNode->aListNode = new AListNode();
+    lhsNode->tRefNode->aListNode->idExprList.push_back(i);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(j);
 
-    rhsNode1.type = RHSType::binary;
-    rhsNode1.op = Operation::plus;
+    rhsNode1->type = RHSType::binary;
+    rhsNode1->op = Operation::plus;
 
     RHSNode* node1 = new RHSNode(); // A<16, 32>[i, j]
     node1->type = RHSType::tref;
-    node1->tRefNode = lhsNode.tRefNode;
+    node1->tRefNode = new TRefNode();
+    node1->tRefNode->paramterIndex = 5; // A
+    node1->tRefNode->cListNode = new CListNode();
+    node1->tRefNode->cListNode->shape.push_back(16);
+    node1->tRefNode->cListNode->shape.push_back(32);
+    node1->tRefNode->aListNode = new AListNode();
+    node1->tRefNode->aListNode->idExprList.push_back(i);
+    node1->tRefNode->aListNode->idExprList.push_back(j);
 
     RHSNode* node2 = new RHSNode(); // alpha<1> * (B<16, 32>[i, k] * C<32, 32>[k, j])
     RHSNode* node3 = new RHSNode(); // alpha<1>
@@ -349,8 +394,10 @@ void mock_root_case5(RootNode& root){
     node2->op = Operation::times;
 
     node3->type = RHSType::sref;
-    node3->sRefNode.paramterIndex = 3; // alpha
-    node3->sRefNode.cListNode.shape.push_back(1);
+    node3->sRefNode = new SRefNode();
+    node3->sRefNode->paramterIndex = 3; // alpha
+    node3->sRefNode->cListNode = new CListNode();
+    node3->sRefNode->cListNode->shape.push_back(1);
     
     node4->type = RHSType::uniary;
 
@@ -358,26 +405,32 @@ void mock_root_case5(RootNode& root){
     node5->op = Operation::times;
 
     node6->type = RHSType::tref;
-    node6->tRefNode.paramterIndex = 0; // B
-    node6->tRefNode.cListNode.shape.push_back(16);
-    node6->tRefNode.cListNode.shape.push_back(32);
-    node6->tRefNode.aListNode.idExprList.push_back(i);
-    node6->tRefNode.aListNode.idExprList.push_back(k);
+    node6->tRefNode = new TRefNode();
+    node6->tRefNode->paramterIndex = 0; // B
+    node6->tRefNode->cListNode = new CListNode();
+    node6->tRefNode->cListNode->shape.push_back(16);
+    node6->tRefNode->cListNode->shape.push_back(32);
+    node6->tRefNode->aListNode = new AListNode();
+    node6->tRefNode->aListNode->idExprList.push_back(i);
+    node6->tRefNode->aListNode->idExprList.push_back(k);
 
     node7->type = RHSType::tref;
-    node7->tRefNode.paramterIndex = 1; // C
-    node7->tRefNode.cListNode.shape.push_back(32);
-    node7->tRefNode.cListNode.shape.push_back(32);
-    node7->tRefNode.aListNode.idExprList.push_back(k);
-    node7->tRefNode.aListNode.idExprList.push_back(j);
+    node7->tRefNode = new TRefNode();
+    node7->tRefNode->paramterIndex = 1; // C
+    node7->tRefNode->cListNode = new CListNode();
+    node7->tRefNode->cListNode->shape.push_back(32);
+    node7->tRefNode->cListNode->shape.push_back(32);
+    node7->tRefNode->aListNode = new AListNode();
+    node7->tRefNode->aListNode->idExprList.push_back(k);
+    node7->tRefNode->aListNode->idExprList.push_back(j);
 
     node5->lnode = node6;
     node5->rnode = node7;
     node4->lnode = node5;
     node2->lnode = node3;
     node2->rnode = node4;
-    rhsNode1.lnode = node1;
-    rhsNode1.rnode = node2;
+    rhsNode1->lnode = node1;
+    rhsNode1->rnode = node2;
 
     Variable vi, vj, vk;
     vi.name = "i";
@@ -389,16 +442,16 @@ void mock_root_case5(RootNode& root){
     vk.name = "k";
     vk.lowerBound = 0;
     vk.upperBound = 32;
-    stmtNode1.variables.push_back(vi);
-    stmtNode1.variables.push_back(vj);
-    stmtNode1.variables.push_back(vk);
+    stmtNode1->variables.push_back(vi);
+    stmtNode1->variables.push_back(vj);
+    stmtNode1->variables.push_back(vk);
 
-    stmtNode1.lhsNode = lhsNode;
-    stmtNode1.rhsNode = rhsNode1;
+    stmtNode1->lhsNode = lhsNode;
+    stmtNode1->rhsNode = rhsNode1;
 
     // stmtNode2
-    rhsNode2.type = RHSType::binary; // A<16, 32>[i, j] + beta<1> * D<16, 32>[i, j]
-    rhsNode2.op = Operation::plus;
+    rhsNode2->type = RHSType::binary; // A<16, 32>[i, j] + beta<1> * D<16, 32>[i, j]
+    rhsNode2->op = Operation::plus;
 
     RHSNode* node8 = new RHSNode(); // A<16, 32>[i, j]
     RHSNode* node9 = new RHSNode(); // beta<1> * D<16, 32>[i, j]
@@ -406,32 +459,44 @@ void mock_root_case5(RootNode& root){
     RHSNode* node11 = new RHSNode(); // D<16, 32>[i, j]
 
     node8->type = RHSType::tref;
-    node8->tRefNode = lhsNode.tRefNode;
+    node8->tRefNode = new TRefNode();
+    node8->tRefNode->paramterIndex = 5; // A
+    node8->tRefNode->cListNode = new CListNode();
+    node8->tRefNode->cListNode->shape.push_back(16);
+    node8->tRefNode->cListNode->shape.push_back(32);
+    node8->tRefNode->aListNode = new AListNode();
+    node8->tRefNode->aListNode->idExprList.push_back(i);
+    node8->tRefNode->aListNode->idExprList.push_back(j);
     
     node9->type = RHSType::binary;
     node9->op = Operation::times;
 
     node10->type = RHSType::sref; // beta
-    node10->sRefNode.paramterIndex = 4;
-    node10->sRefNode.cListNode.shape.push_back(1);
+    node10->sRefNode = new SRefNode();
+    node10->sRefNode->paramterIndex = 4; // alpha
+    node10->sRefNode->cListNode = new CListNode();
+    node10->sRefNode->cListNode->shape.push_back(1);
 
     node11->type = RHSType::tref; // D
-    node11->tRefNode.paramterIndex = 2;
-    node11->tRefNode.cListNode.shape.push_back(16);
-    node11->tRefNode.cListNode.shape.push_back(32);
-    node11->tRefNode.aListNode.idExprList.push_back(i);
-    node11->tRefNode.aListNode.idExprList.push_back(j);
+    node11->tRefNode = new TRefNode();
+    node11->tRefNode->paramterIndex = 2;
+    node11->tRefNode->cListNode = new CListNode();
+    node11->tRefNode->cListNode->shape.push_back(16);
+    node11->tRefNode->cListNode->shape.push_back(32);
+    node11->tRefNode->aListNode = new AListNode();
+    node11->tRefNode->aListNode->idExprList.push_back(i);
+    node11->tRefNode->aListNode->idExprList.push_back(j);
 
     node9->lnode = node10;
     node9->rnode = node11;
-    rhsNode2.lnode = node8;
-    rhsNode2.rnode = node9;
+    rhsNode2->lnode = node8;
+    rhsNode2->rnode = node9;
 
-    stmtNode2.variables.push_back(vi);
-    stmtNode2.variables.push_back(vj);
+    stmtNode2->variables.push_back(vi);
+    stmtNode2->variables.push_back(vj);
 
-    stmtNode2.lhsNode = lhsNode;
-    stmtNode2.rhsNode = rhsNode2;
+    stmtNode2->lhsNode = lhsNode;
+    stmtNode2->rhsNode = rhsNode2;
 
     root.stmtNodes.push_back(stmtNode1);
     root.stmtNodes.push_back(stmtNode2);
@@ -463,38 +528,61 @@ void mock_env_case6(Env& env) {
 }
 
 void mock_root_case6(RootNode& root){
-    StmtNode stmtNode;
-    LHSNode lhsNode;
-    RHSNode rhsNode;
-    IdExprNode en, ek, ep, eq, ec, er, es, epr, eqs;
-    en.expr = "n"; en.variableIndices.push_back(0);
-    ek.expr = "k"; ek.variableIndices.push_back(1);
-    ep.expr = "p"; ep.variableIndices.push_back(2);
-    eq.expr = "q"; eq.variableIndices.push_back(3);
-    ec.expr = "c"; ec.variableIndices.push_back(4);
-    er.expr = "r"; er.variableIndices.push_back(5);
-    es.expr = "s"; es.variableIndices.push_back(6);
-    epr.expr = "p + r"; epr.variableIndices.push_back(2); epr.variableIndices.push_back(5);
-    eqs.expr = "q + s"; eqs.variableIndices.push_back(3); eqs.variableIndices.push_back(6);
+    StmtNode* stmtNode = new StmtNode();
+    LHSNode* lhsNode = new LHSNode();
+    RHSNode* rhsNode = new RHSNode();
+    IdExprNode *en, *ek, *ep, *eq, *ec, *er, *es, *epr, *eqs;
+    en = new IdExprNode();
+    ek = new IdExprNode();
+    ep = new IdExprNode();
+    eq = new IdExprNode();
+    ec = new IdExprNode();
+    er = new IdExprNode();
+    es = new IdExprNode();
+    epr = new IdExprNode();
+    eqs = new IdExprNode();
+    en->expr = "n"; en->variableIndices.push_back(0);
+    ek->expr = "k"; ek->variableIndices.push_back(1);
+    ep->expr = "p"; ep->variableIndices.push_back(2);
+    eq->expr = "q"; eq->variableIndices.push_back(3);
+    ec->expr = "c"; ec->variableIndices.push_back(4);
+    er->expr = "r"; er->variableIndices.push_back(5);
+    es->expr = "s"; es->variableIndices.push_back(6);
+    epr->expr = "p + r"; epr->variableIndices.push_back(2); epr->variableIndices.push_back(5);
+    eqs->expr = "q + s"; eqs->variableIndices.push_back(3); eqs->variableIndices.push_back(6);
 
     // 构造左部
-    lhsNode.tRefNode.paramterIndex = 2; // A
-    lhsNode.tRefNode.cListNode.shape.push_back(2);
-    lhsNode.tRefNode.cListNode.shape.push_back(8);
-    lhsNode.tRefNode.cListNode.shape.push_back(5);
-    lhsNode.tRefNode.cListNode.shape.push_back(5);
-    lhsNode.tRefNode.aListNode.idExprList.push_back(en);
-    lhsNode.tRefNode.aListNode.idExprList.push_back(ek);
-    lhsNode.tRefNode.aListNode.idExprList.push_back(ep);
-    lhsNode.tRefNode.aListNode.idExprList.push_back(eq);
+    lhsNode->tRefNode = new TRefNode();
+    lhsNode->tRefNode->paramterIndex = 2; // A
+    lhsNode->tRefNode->cListNode = new CListNode();
+    lhsNode->tRefNode->cListNode->shape.push_back(2);
+    lhsNode->tRefNode->cListNode->shape.push_back(8);
+    lhsNode->tRefNode->cListNode->shape.push_back(5);
+    lhsNode->tRefNode->cListNode->shape.push_back(5);
+    lhsNode->tRefNode->aListNode = new AListNode();
+    lhsNode->tRefNode->aListNode->idExprList.push_back(en);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(ek);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(ep);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(eq);
 
     // 构造右部
-    rhsNode.type = RHSType::binary;
-    rhsNode.op = Operation::plus;
+    rhsNode->type = RHSType::binary;
+    rhsNode->op = Operation::plus;
 
     RHSNode* node1 = new RHSNode(); // A<2, 8, 5, 5>[n, k, p, q]
     node1->type = RHSType::tref;
-    node1->tRefNode = lhsNode.tRefNode;
+    node1->tRefNode = new TRefNode();
+    node1->tRefNode->paramterIndex = 2; // A
+    node1->tRefNode->cListNode = new CListNode();
+    node1->tRefNode->cListNode->shape.push_back(2);
+    node1->tRefNode->cListNode->shape.push_back(8);
+    node1->tRefNode->cListNode->shape.push_back(5);
+    node1->tRefNode->cListNode->shape.push_back(5);
+    node1->tRefNode->aListNode = new AListNode();
+    node1->tRefNode->aListNode->idExprList.push_back(en);
+    node1->tRefNode->aListNode->idExprList.push_back(ek);
+    node1->tRefNode->aListNode->idExprList.push_back(ep);
+    node1->tRefNode->aListNode->idExprList.push_back(eq);
 
     RHSNode* node2 = new RHSNode();
     node2->type = RHSType::binary;
@@ -502,31 +590,37 @@ void mock_root_case6(RootNode& root){
     RHSNode* node3 = new RHSNode(); // B<2, 16, 7, 7>[n, c, p + r, q + s]
     RHSNode* node4 = new RHSNode(); // C<8, 16, 3, 3>[k, c, r, s]
     node3->type = RHSType::tref;
-    node3->tRefNode.paramterIndex = 0; // B
-    node3->tRefNode.cListNode.shape.push_back(2);
-    node3->tRefNode.cListNode.shape.push_back(16);
-    node3->tRefNode.cListNode.shape.push_back(7);
-    node3->tRefNode.cListNode.shape.push_back(7);
-    node3->tRefNode.aListNode.idExprList.push_back(en);
-    node3->tRefNode.aListNode.idExprList.push_back(ec);
-    node3->tRefNode.aListNode.idExprList.push_back(epr);
-    node3->tRefNode.aListNode.idExprList.push_back(eqs);
+    node3->tRefNode = new TRefNode();
+    node3->tRefNode->paramterIndex = 0; // B
+    node3->tRefNode->cListNode = new CListNode();
+    node3->tRefNode->cListNode->shape.push_back(2);
+    node3->tRefNode->cListNode->shape.push_back(16);
+    node3->tRefNode->cListNode->shape.push_back(7);
+    node3->tRefNode->cListNode->shape.push_back(7);
+    node3->tRefNode->aListNode = new AListNode();
+    node3->tRefNode->aListNode->idExprList.push_back(en);
+    node3->tRefNode->aListNode->idExprList.push_back(ec);
+    node3->tRefNode->aListNode->idExprList.push_back(epr);
+    node3->tRefNode->aListNode->idExprList.push_back(eqs);
     node4->type = RHSType::tref;
-    node4->tRefNode.paramterIndex = 1; // C
-    node4->tRefNode.cListNode.shape.push_back(8);
-    node4->tRefNode.cListNode.shape.push_back(16);
-    node4->tRefNode.cListNode.shape.push_back(3);
-    node4->tRefNode.cListNode.shape.push_back(3);
-    node4->tRefNode.aListNode.idExprList.push_back(ek);
-    node4->tRefNode.aListNode.idExprList.push_back(ec);
-    node4->tRefNode.aListNode.idExprList.push_back(er);
-    node4->tRefNode.aListNode.idExprList.push_back(es);
+    node4->tRefNode = new TRefNode();
+    node4->tRefNode->paramterIndex = 1; // C
+    node4->tRefNode->cListNode = new CListNode();
+    node4->tRefNode->cListNode->shape.push_back(8);
+    node4->tRefNode->cListNode->shape.push_back(16);
+    node4->tRefNode->cListNode->shape.push_back(3);
+    node4->tRefNode->cListNode->shape.push_back(3);
+    node4->tRefNode->aListNode = new AListNode();
+    node4->tRefNode->aListNode->idExprList.push_back(ek);
+    node4->tRefNode->aListNode->idExprList.push_back(ec);
+    node4->tRefNode->aListNode->idExprList.push_back(er);
+    node4->tRefNode->aListNode->idExprList.push_back(es);
 
     node2->lnode = node3;
     node2->rnode = node4;
 
-    rhsNode.lnode = node1;
-    rhsNode.rnode = node2;
+    rhsNode->lnode = node1;
+    rhsNode->rnode = node2;
 
     Variable vn, vk, vp, vq, vc, vr, vs;
     vn.name="n"; vk.name="k"; vp.name="p"; vq.name="q"; vc.name="c"; vr.name="r"; vs.name="s";
@@ -534,16 +628,16 @@ void mock_root_case6(RootNode& root){
     vc.lowerBound = 0; vr.lowerBound = 0; vs.lowerBound = 0;
     vn.upperBound = 2; vk.upperBound = 8; vp.upperBound = 5; vq.upperBound = 5;
     vc.upperBound = 16; vr.upperBound = 3; vs.upperBound = 3;
-    stmtNode.variables.push_back(vn);
-    stmtNode.variables.push_back(vk);
-    stmtNode.variables.push_back(vp);
-    stmtNode.variables.push_back(vq);
-    stmtNode.variables.push_back(vc);
-    stmtNode.variables.push_back(vr);
-    stmtNode.variables.push_back(vs);
+    stmtNode->variables.push_back(vn);
+    stmtNode->variables.push_back(vk);
+    stmtNode->variables.push_back(vp);
+    stmtNode->variables.push_back(vq);
+    stmtNode->variables.push_back(vc);
+    stmtNode->variables.push_back(vr);
+    stmtNode->variables.push_back(vs);
 
-    stmtNode.lhsNode = lhsNode;
-    stmtNode.rhsNode = rhsNode;
+    stmtNode->lhsNode = lhsNode;
+    stmtNode->rhsNode = rhsNode;
     root.stmtNodes.push_back(stmtNode);
 }
 
@@ -563,31 +657,36 @@ void mock_env_case7(Env& env) {
 }
 
 void mock_root_case7(RootNode& root){
-    StmtNode stmtNode;
-    LHSNode lhsNode;
-    RHSNode rhsNode;
-    IdExprNode i, j;
-    i.variableIndices.push_back(0);
-    i.expr = "i";
-    j.variableIndices.push_back(1);
-    j.expr = "j";
+    StmtNode* stmtNode = new StmtNode();
+    LHSNode* lhsNode = new LHSNode();
+    RHSNode* rhsNode = new RHSNode();
+    IdExprNode *i = new IdExprNode();
+    IdExprNode *j = new IdExprNode();
+    i->variableIndices.push_back(0);
+    i->expr = "i";
+    j->variableIndices.push_back(1);
+    j->expr = "j";
 
     // 构造左部
-    TRefNode tRefNode;
-    tRefNode.paramterIndex = 1; // B
-    tRefNode.cListNode.shape.push_back(16);
-    tRefNode.cListNode.shape.push_back(32);
-    tRefNode.aListNode.idExprList.push_back(i);
-    tRefNode.aListNode.idExprList.push_back(j);
-    lhsNode.tRefNode = tRefNode;
+    lhsNode->tRefNode = new TRefNode();
+    lhsNode->tRefNode->paramterIndex = 1; // B
+    lhsNode->tRefNode->cListNode = new CListNode();
+    lhsNode->tRefNode->cListNode->shape.push_back(16);
+    lhsNode->tRefNode->cListNode->shape.push_back(32);
+    lhsNode->tRefNode->aListNode = new AListNode();
+    lhsNode->tRefNode->aListNode->idExprList.push_back(i);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(j);
 
     // 构造右部
-    rhsNode.type = RHSType::tref;
-    rhsNode.tRefNode.paramterIndex = 0;  // A
-    rhsNode.tRefNode.cListNode.shape.push_back(32);
-    rhsNode.tRefNode.cListNode.shape.push_back(16);
-    rhsNode.tRefNode.aListNode.idExprList.push_back(j);
-    rhsNode.tRefNode.aListNode.idExprList.push_back(i);
+    rhsNode->type = RHSType::tref;
+    rhsNode->tRefNode = new TRefNode();
+    rhsNode->tRefNode->paramterIndex = 0;  // A
+    rhsNode->tRefNode->cListNode = new CListNode();
+    rhsNode->tRefNode->cListNode->shape.push_back(32);
+    rhsNode->tRefNode->cListNode->shape.push_back(16);
+    rhsNode->tRefNode->aListNode = new AListNode();
+    rhsNode->tRefNode->aListNode->idExprList.push_back(j);
+    rhsNode->tRefNode->aListNode->idExprList.push_back(i);
 
     Variable vi, vj;
     vi.name = "i";
@@ -596,11 +695,11 @@ void mock_root_case7(RootNode& root){
     vj.name = "j";
     vj.lowerBound = 0;
     vj.upperBound = 32;
-    stmtNode.variables.push_back(vi);
-    stmtNode.variables.push_back(vj);
+    stmtNode->variables.push_back(vi);
+    stmtNode->variables.push_back(vj);
 
-    stmtNode.lhsNode = lhsNode;
-    stmtNode.rhsNode = rhsNode;
+    stmtNode->lhsNode = lhsNode;
+    stmtNode->rhsNode = rhsNode;
     root.stmtNodes.push_back(stmtNode);
 }
 
@@ -620,29 +719,35 @@ void mock_env_case10(Env& env) {
 }
 
 void mock_root_case10(RootNode& root){
-    StmtNode stmtNode;
-    LHSNode lhsNode;
-    RHSNode rhsNode;
-    IdExprNode i, j, i1, i2;
-    i.variableIndices.push_back(0);
-    i.expr = "i";
-    j.variableIndices.push_back(1);
-    j.expr = "j";
-    i1.variableIndices.push_back(0);
-    i1.expr = "i + 1";
-    i2.variableIndices.push_back(0);
-    i2.expr = "i + 2";
+    StmtNode* stmtNode = new StmtNode();
+    LHSNode* lhsNode = new LHSNode();
+    RHSNode* rhsNode = new RHSNode();
+    IdExprNode *i = new IdExprNode();
+    IdExprNode *j = new IdExprNode();
+    IdExprNode *i1 = new IdExprNode();
+    IdExprNode *i2 = new IdExprNode();
+    i->variableIndices.push_back(0);
+    i->expr = "i";
+    j->variableIndices.push_back(1);
+    j->expr = "j";
+    i1->variableIndices.push_back(0);
+    i1->expr = "i + 1";
+    i2->variableIndices.push_back(0);
+    i2->expr = "i + 2";
 
     // 构造左部
-    lhsNode.tRefNode.paramterIndex = 1; // A
-    lhsNode.tRefNode.cListNode.shape.push_back(8);
-    lhsNode.tRefNode.cListNode.shape.push_back(8);
-    lhsNode.tRefNode.aListNode.idExprList.push_back(i);
-    lhsNode.tRefNode.aListNode.idExprList.push_back(j);
+    lhsNode->tRefNode = new TRefNode();
+    lhsNode->tRefNode->paramterIndex = 1; // A
+    lhsNode->tRefNode->cListNode = new CListNode();
+    lhsNode->tRefNode->cListNode->shape.push_back(8);
+    lhsNode->tRefNode->cListNode->shape.push_back(8);
+    lhsNode->tRefNode->aListNode = new AListNode();
+    lhsNode->tRefNode->aListNode->idExprList.push_back(i);
+    lhsNode->tRefNode->aListNode->idExprList.push_back(j);
 
     // 构造右部
-    rhsNode.type = RHSType::binary;
-    rhsNode.op = Operation::divide;
+    rhsNode->type = RHSType::binary;
+    rhsNode->op = Operation::divide;
 
     RHSNode* node1 = new RHSNode(); // (B<10, 10>[i, j] + B<10, 10>[i + 1, j] + B<10, 10>[i + 2, j])
     RHSNode* node2 = new RHSNode(); // B<10, 10>[i, j] + B<10, 10>[i + 1, j] + B<10, 10>[i + 2, j]
@@ -658,40 +763,50 @@ void mock_root_case10(RootNode& root){
     node2->op = Operation::plus;
 
     node3->type = RHSType::tref;
-    node3->tRefNode.paramterIndex = 0; // B
-    node3->tRefNode.cListNode.shape.push_back(8);
-    node3->tRefNode.cListNode.shape.push_back(8);
-    node3->tRefNode.aListNode.idExprList.push_back(i);
-    node3->tRefNode.aListNode.idExprList.push_back(j);
+    node3->tRefNode = new TRefNode();
+    node3->tRefNode->paramterIndex = 0; // B
+    node3->tRefNode->cListNode = new CListNode();
+    node3->tRefNode->cListNode->shape.push_back(8);
+    node3->tRefNode->cListNode->shape.push_back(8);
+    node3->tRefNode->aListNode = new AListNode();
+    node3->tRefNode->aListNode->idExprList.push_back(i);
+    node3->tRefNode->aListNode->idExprList.push_back(j);
 
     node4->type = RHSType::binary;
     node4->op = Operation::plus;
 
     node5->type = RHSType::tref;
-    node5->tRefNode.paramterIndex = 0;
-    node5->tRefNode.cListNode.shape.push_back(8);
-    node5->tRefNode.cListNode.shape.push_back(8);
-    node5->tRefNode.aListNode.idExprList.push_back(i1);
-    node5->tRefNode.aListNode.idExprList.push_back(j);
+    node5->tRefNode = new TRefNode();
+    node5->tRefNode->paramterIndex = 0;
+    node5->tRefNode->cListNode = new CListNode();
+    node5->tRefNode->cListNode->shape.push_back(8);
+    node5->tRefNode->cListNode->shape.push_back(8);
+    node5->tRefNode->aListNode = new AListNode();
+    node5->tRefNode->aListNode->idExprList.push_back(i1);
+    node5->tRefNode->aListNode->idExprList.push_back(j);
 
     node6->type = RHSType::tref;
-    node6->tRefNode.paramterIndex = 0;
-    node6->tRefNode.cListNode.shape.push_back(8);
-    node6->tRefNode.cListNode.shape.push_back(8);
-    node6->tRefNode.aListNode.idExprList.push_back(i2);
-    node6->tRefNode.aListNode.idExprList.push_back(j);
+    node6->tRefNode = new TRefNode();
+    node6->tRefNode->paramterIndex = 0;
+    node6->tRefNode->cListNode = new CListNode();
+    node6->tRefNode->cListNode->shape.push_back(8);
+    node6->tRefNode->cListNode->shape.push_back(8);
+    node6->tRefNode->aListNode = new AListNode();
+    node6->tRefNode->aListNode->idExprList.push_back(i2);
+    node6->tRefNode->aListNode->idExprList.push_back(j);
 
     node7->type = RHSType::constref;
-    node7->constNode.isInt = true;
-    node7->constNode.intVal = 3;
+    node7->constNode = new ConstNode();
+    node7->constNode->isInt = true;
+    node7->constNode->intVal = 3;
 
     node4->lnode = node5;
     node4->rnode = node6;
     node2->lnode = node3;
     node2->rnode = node4;
     node1->lnode = node2;
-    rhsNode.lnode = node1;
-    rhsNode.rnode = node7;
+    rhsNode->lnode = node1;
+    rhsNode->rnode = node7;
 
     Variable vi, vj;
     vi.name = "i";
@@ -700,10 +815,10 @@ void mock_root_case10(RootNode& root){
     vj.name = "j";
     vj.lowerBound = 0;
     vj.upperBound = 8;
-    stmtNode.variables.push_back(vi);
-    stmtNode.variables.push_back(vj);
+    stmtNode->variables.push_back(vi);
+    stmtNode->variables.push_back(vj);
 
-    stmtNode.lhsNode = lhsNode;
-    stmtNode.rhsNode = rhsNode;
+    stmtNode->lhsNode = lhsNode;
+    stmtNode->rhsNode = rhsNode;
     root.stmtNodes.push_back(stmtNode);
 }
