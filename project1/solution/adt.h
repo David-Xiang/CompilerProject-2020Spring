@@ -46,7 +46,9 @@ class Variable {
 public:
     string name;
     int lowerBound, upperBound; // lb能取到，ub取不到
+    bool complex; // 是否包含多个变量
 };
+
 
 class Env {
 public:
@@ -66,6 +68,9 @@ class IdExprNode {
 public:
     vector<int> variableIndices; // 暂时未使用
     string expr; 
+    vector<Operation> op;
+    vector<int> num;
+    vector<string> ids;
 };
 
 class AListNode {
@@ -89,6 +94,7 @@ public:
     int paramterIndex;
     CListNode* cListNode;
     AListNode* aListNode;
+    vector<Variable> variables;     // 循环变量名称以及取值上下界
 };
 
 class RHSNode {
@@ -100,6 +106,7 @@ public:
     SRefNode* sRefNode;      // sref有效
     ConstNode* constNode;    // constref有效
     Operation op;           // binary有效
+    vector<Variable> variables;     // 循环变量名称以及取值上下界
 };
 
 class LHSNode {
