@@ -60,6 +60,13 @@ string gen_body(Env& env, RootNode& root) {
 string gen_loop(Env& env, StmtNode& stmt, int loop) {
     ostringstream oss;
     string indent = "";
+
+    if (stmt.variables[loop].complex)
+    {
+        oss << gen_loop(env, stmt, loop + 1);
+        return oss.str();
+    }
+
     for (int i = 0; i < loop + 1; i++) {
         indent += one_tab;
     }
@@ -74,6 +81,16 @@ string gen_loop(Env& env, StmtNode& stmt, int loop) {
     if (loop < stmt.variables.size() - 1) {
         oss << gen_loop(env, stmt, loop + 1);
     } else {
+        for (int i = 0; i < stmt.variables.size(); ++i)
+        {
+            Variable v = stmt.variables[i];
+            if (v.complex)
+            {
+                oss << indent << one_tab;
+                oss << "if " << "(" <<  v.name << " < " << v.lowerBound << " || " <<
+                v.name << " >= " << v.upperBound << " ) " << " continue;\n";
+            }
+        }
         oss << indent << one_tab;
         oss << env.tensors[stmt.lhsNode->tRefNode->paramterIndex].name;
         vector<IdExprNode*> & lhsIdExprList = stmt.lhsNode->tRefNode->aListNode->idExprList;

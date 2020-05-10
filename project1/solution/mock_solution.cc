@@ -1,67 +1,208 @@
 #include "mock_solution.h"
+#include "hw2c.tab.c"
+#include "lex.yy.c"
 #include <vector>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <json/json.h>
+
+extern RootNode * root;
 
 int main() {
-    Env env_example;
-    RootNode root_example;
-    string path_example;
-    mock_env_example(env_example);
-    mock_root_example(root_example);
-    path_example = "./kernels/"+env_example.name+".cc";
-    gen_and_save(path_example, env_example, root_example);
 
-    Env env_case1;
-    RootNode root_case1;
-    string path_case1;
-    mock_env_case1(env_case1);
-    mock_root_case1(root_case1);
-    path_case1 = "./kernels/"+env_case1.name+".cc";
-    gen_and_save(path_case1, env_case1, root_case1);
+    Json::Reader reader;
+    Json::Value cases;
+ 
+    // Env env_example;
+    // RootNode root_example;
+    // string path_example;
+    // path_example = "./kernels/"+env_example.name+".cc";
+    // mock_env_example(env_example);
+    // mock_root_example(root_example);
+    // gen_and_save(path_example, env_example, root_example);
 
-    Env env_case4;
-    RootNode root_case4;
-    string path_case4;
-    mock_env_case4(env_case4);
-    mock_root_case4(root_case4);
-    path_case4 = "./kernels/"+env_case4.name+".cc";
-    gen_and_save(path_case4, env_case4, root_case4);
+    ifstream file_example("./cases/example.json");
 
-    Env env_case5;
-    RootNode root_case5;
-    string path_case5;
-    mock_env_case5(env_case5);
-    mock_root_case5(root_case5);
-    path_case5 = "./kernels/"+env_case5.name+".cc";
-    gen_and_save(path_case5, env_case5, root_case5);
+    if (reader.parse(file_example, cases)) {
+        Env env_example;
+        string path_example;
+        get_env_from_json(cases, env_example);
+        yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+        yyparse(&env_example);
+        // check_env(env_example);
+        path_example = "./kernels/"+env_example.name+".cc";
+        gen_and_save(path_example, env_example, *root);
+    }
+
+    // Env env_case1;
+    // RootNode root_case1;
+    // string path_case1;
+    // mock_env_case1(env_case1);
+    // mock_root_case1(root_case1);
+    // path_case1 = "./kernels/"+env_case1.name+".cc";
+    // gen_and_save(path_case1, env_case1, root_case1);
+
+    ifstream file_case1("./cases/case1.json");
+
+    if (reader.parse(file_case1, cases)) {
+        Env env_case1;
+        string path_case1;
+        get_env_from_json(cases, env_case1);
+        yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+        yyparse(&env_case1);
+        // check_env(env_case1);
+        path_case1 = "./kernels/"+env_case1.name+".cc";
+        gen_and_save(path_case1, env_case1, *root);
+    }
+
+    // Env env_case4;
+    // string path_case4;
+    // mock_env_case4(env_case4);
+    // yy_switch_to_buffer(yy_scan_string("A<16, 32>[i, j] = A<16, 32>[i, j] + B<16, 32>[i, k] * C<32, 32>[k, j];"));
+    // yyparse(&env_case4);
+    // path_case4 = "./kernels/"+env_case4.name+".cc";
+    // gen_and_save(path_case4, env_case4, *root);
+
+    ifstream file_case4("./cases/case4.json");
     
-    Env env_case6;
-    RootNode root_case6;
-    string path_case6;
-    mock_env_case6(env_case6);
-    mock_root_case6(root_case6);
-    path_case6 = "./kernels/"+env_case6.name+".cc";
-    gen_and_save(path_case6, env_case6, root_case6);
+    if (reader.parse(file_case4, cases)) {
+        Env env_case4;
+        string path_case4;
+        get_env_from_json(cases, env_case4);
+        yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+        yyparse(&env_case4);
+        // check_env(env_case4);
+        path_case4 = "./kernels/"+env_case4.name+".cc";
+        gen_and_save(path_case4, env_case4, *root);
+    }
 
-    Env env_case7;
-    RootNode root_case7;
-    string path_case7;
-    mock_env_case7(env_case7);
-    mock_root_case7(root_case7);
-    path_case7 = "./kernels/"+env_case7.name+".cc";
-    gen_and_save(path_case7, env_case7, root_case7);
+    // Env env_case5;
+    // RootNode root_case5;
+    // string path_case5;
+    // mock_env_case5(env_case5);
+    // mock_root_case5(root_case5);
+    // path_case5 = "./kernels/"+env_case5.name+".cc";
+    // gen_and_save(path_case5, env_case5, root_case5);
+
+    ifstream file_case5("./cases/case5.json");
     
-    Env env_case10;
-    RootNode root_case10;
-    string path_case10;
-    mock_env_case10(env_case10);
-    mock_root_case10(root_case10);
-    path_case10 = "./kernels/"+env_case10.name+".cc";
-    gen_and_save(path_case10, env_case10, root_case10);
-    return 0;
+    if (reader.parse(file_case5, cases)) {
+        Env env_case5;
+        string path_case5;
+        get_env_from_json(cases, env_case5);
+        yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+        yyparse(&env_case5);
+        // check_env(env_case5);
+        path_case5 = "./kernels/"+env_case5.name+".cc";
+        gen_and_save(path_case5, env_case5, *root);
+    }
+    
+    // Env env_case6;
+    // RootNode root_case6;
+    // string path_case6;
+    // mock_env_case6(env_case6);
+    // mock_root_case6(root_case6);
+    // path_case6 = "./kernels/"+env_case6.name+".cc";
+    // gen_and_save(path_case6, env_case6, root_case6);
+
+    ifstream file_case6("./cases/case6.json");
+    
+    if (reader.parse(file_case6, cases)) {
+        Env env_case6;
+        string path_case6;
+        get_env_from_json(cases, env_case6);
+        yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+        yyparse(&env_case6);
+        // check_env(env_case6);
+        path_case6 = "./kernels/"+env_case6.name+".cc";
+        gen_and_save(path_case6, env_case6, *root);
+    }
+
+    // Env env_case7;
+    // RootNode root_case7;
+    // string path_case7;
+    // mock_env_case7(env_case7);
+    // mock_root_case7(root_case7);
+    // path_case7 = "./kernels/"+env_case7.name+".cc";
+    // gen_and_save(path_case7, env_case7, root_case7);
+
+    ifstream file_case7("./cases/case7.json");
+    
+    if (reader.parse(file_case7, cases)) {
+        Env env_case7;
+        string path_case7;
+        get_env_from_json(cases, env_case7);
+        yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+        yyparse(&env_case7);
+        // check_env(env_case7);
+        path_case7 = "./kernels/"+env_case7.name+".cc";
+        gen_and_save(path_case7, env_case7, *root);
+    }
+    
+    // Env env_case10;
+    // RootNode root_case10;
+    // string path_case10;
+    // mock_env_case10(env_case10);
+    // mock_root_case10(root_case10);
+    // path_case10 = "./kernels/"+env_case10.name+".cc";
+    // gen_and_save(path_case10, env_case10, root_case10);
+    // return 0;
+
+    ifstream file_case10("./cases/case10.json");
+    
+    if (reader.parse(file_case10, cases)) {
+        Env env_case10;
+        string path_case10;
+        get_env_from_json(cases, env_case10);
+        yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+        yyparse(&env_case10);
+        // check_env(env_case10);
+        path_case10 = "./kernels/"+env_case10.name+".cc";
+        gen_and_save(path_case10, env_case10, *root);
+    }
+}
+
+void get_env_from_json(Json::Value value, Env & env) 
+{
+    env.name = value["name"].asString();
+    if (value["data_type"].asString() == "float") 
+    {
+        env.isInt = false;
+    }
+    else env.isInt = true;
+
+    for (int i = 0; i < value["ins"].size(); ++i)
+    {
+        Tensor t;
+        t.name = value["ins"][i].asString();
+        env.tensors.push_back(t);
+    }
+
+    for (int i = 0; i < value["outs"].size(); ++i)
+    {
+        Tensor t;
+        t.name = value["outs"][i].asString();
+        env.tensors.push_back(t);
+    }
+
+}
+
+void check_env(Env & env)
+{
+    cout << "Env name: " << env.name << endl;
+    cout << "Type: " << (env.isInt?"int":"float") << endl;
+    cout << "Tensors: " << endl;
+    for (int i = 0; i < env.tensors.size(); ++i)
+    {
+        cout << "    " << env.tensors[i].name << '<' ;
+        for (int j = 0; j < env.tensors[i].shape.size(); ++j)
+        {
+            cout <<  env.tensors[i].shape[j] << ' ';
+        }
+    }
+    cout << endl;
 }
 
 void mock_env_example(Env& env) {

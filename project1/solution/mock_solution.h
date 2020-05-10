@@ -3,6 +3,9 @@
 
 #include "adt.h"
 #include "backend.h"
+#include <json/json.h>
+void get_env_from_json(Json::Value value, Env & env);
+void check_env(Env & env);
 void mock_env_example(Env& env);
 void mock_root_example(RootNode& root);
 void mock_env_case1(Env& env);
