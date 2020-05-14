@@ -372,7 +372,7 @@ struct yy_trans_info
 static yyconst flex_int16_t yy_accept[18] =
     {   0,
         0,    0,    8,    7,    1,    6,    6,    3,    5,    2,
-        1,    4,    0,    3,    2,    4,    0
+        1,    4,    4,    3,    2,    4,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -414,8 +414,8 @@ static yyconst flex_int32_t yy_meta[10] =
 
 static yyconst flex_int16_t yy_base[19] =
     {   0,
-        0,    0,   18,   19,   15,   19,    9,    4,   19,    0,
-       13,    7,    6,    0,    0,   19,   19,   10
+        0,    0,   19,   20,   16,   20,   10,    4,   20,    0,
+       14,    8,    7,    0,    0,    6,   20,   10
     } ;
 
 static yyconst flex_int16_t yy_def[19] =
@@ -424,18 +424,18 @@ static yyconst flex_int16_t yy_def[19] =
        17,    8,   17,    8,   18,   17,    0,   17
     } ;
 
-static yyconst flex_int16_t yy_nxt[29] =
+static yyconst flex_int16_t yy_nxt[30] =
     {   0,
         4,    5,    6,    7,    7,    4,    8,    9,   10,   13,
-       14,   15,   16,   12,   11,   12,   11,   17,    3,   17,
-       17,   17,   17,   17,   17,   17,   17,   17
+       14,   15,   16,   16,   12,   11,   12,   11,   17,    3,
+       17,   17,   17,   17,   17,   17,   17,   17,   17
     } ;
 
-static yyconst flex_int16_t yy_chk[29] =
+static yyconst flex_int16_t yy_chk[30] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    8,
-        8,   18,   13,   12,   11,    7,    5,    3,   17,   17,
-       17,   17,   17,   17,   17,   17,   17,   17
+        8,   18,   16,   13,   12,   11,    7,    5,    3,   17,
+       17,   17,   17,   17,   17,   17,   17,   17,   17
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -707,7 +707,7 @@ yy_match:
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 19 );
+		while ( yy_base[yy_current_state] != 20 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];

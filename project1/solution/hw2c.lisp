@@ -14,7 +14,7 @@ delim      	[ \t\n]
 whitespace 	{delim}+
 
 identifier	[a-zA-Z_]([a-zA-Z_0-9])*
-float		("+"|"-")?[0-9]+("."[0-9])?
+float		("+"|"-")?[0-9]+("."[0-9]*)?
 digit      	[0-9]
 integer    	{digit}+
 
