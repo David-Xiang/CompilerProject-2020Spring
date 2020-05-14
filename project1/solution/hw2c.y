@@ -209,7 +209,6 @@ TRef:	ID '<' CList '>' '[' AList ']'
 			$$ -> cListNode = $3;
 			$$ -> aListNode = $6;
 			$$ -> variables = getVariableBounds($3, $6);
-			// cout << "length of ID: " << strlen($1) << endl;
 			$$ -> paramterIndex = setTensorsShape((Env *)env, $1, $3);
 		}
 	;

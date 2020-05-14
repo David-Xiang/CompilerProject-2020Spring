@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <set>
 #include <json/json.h>
 
 extern RootNode * root;
@@ -59,18 +60,28 @@ void get_env_from_json(Json::Value value, Env & env)
     }
     else env.isInt = true;
 
+    set<string> params;
+
     for (int i = 0; i < value["ins"].size(); ++i)
     {
         Tensor t;
         t.name = value["ins"][i].asString();
-        env.tensors.push_back(t);
+        if (params.find(t.name) == params.end())
+        {
+            env.tensors.push_back(t);
+            params.insert(t.name);
+        }
     }
 
     for (int i = 0; i < value["outs"].size(); ++i)
     {
         Tensor t;
         t.name = value["outs"][i].asString();
-        env.tensors.push_back(t);
+        if (params.find(t.name) == params.end())
+        {
+            env.tensors.push_back(t);
+            params.insert(t.name);
+        }
     }
 
 }
