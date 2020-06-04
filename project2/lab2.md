@@ -1,3 +1,29 @@
+对于一个表达式树，考虑某个节点`y`，对应操作符为op，记其所有子节点为`x1`,...,`xn`。在表达式树求值的过程中，我们会自底向上先计算节点`x1`处的值`x1.val`，直到计算完`xn.val`，后利用这n个值来计算`y`节点的取值`y.val`：
+$$
+    y.val = op(x_1.val, x_2.val, \cdots, x_n.val)
+$$
+自动求导的过程如下：假设我们已有计算最终的函数值$L$对`y.val`的梯度$\frac{\partial L}{\partial y.val}$的表达式树，记为`dy`, 我们希望将梯度传递到子节点，也就是对每个`xi`，分别构造另一颗表达式树`dxi`，用于计算梯度$\frac{\partial L}{\partial x_i.val}$。
+
+利用链式求导法则，我们有：
+$$
+    \frac{\partial L}{\partial x_i.val} = \frac{\partial L}{\partial y.val} \frac{\partial y.val}{\partial x_i.val}
+$$
+其中$\frac{\partial y.val}{\partial x_i.val}$这一项的表达式仅于依赖操作op，其取值则只依赖于`x1`,...,`xn`的取值。也就是说，我们可以构造另一个运算符op_i，其有$n+1$个输入，分别是`x1`,...,`xn`和`dop`的取值，输出则是梯度$\frac{\partial L}{\partial x_i}$。这样，以op_i为根节点，将计算`x1`,...,`xn`和`dop`的表达式树作为子树连接到`op_i`上得到的树，就是所求的`dxi`。
+
+如下图所示：
+
+<img src="fig.jpg" style="zoom:30%;" />
+
+对于常见的操作符，我们列出其求导算子如下：
+
+ - y = x1 + x2; dx1 = dy; dx2 = dy;
+ - y = x1 - x2; dx1 = dy; dx2 = -dy;
+ - y = x1 * x2; dx1 = dy * x2; dx2 = dy * x1;
+ - y = x1 / x2; dx1 = dy / x2; dx2 = - x1 / (x2 * x2) * dy
+
+-----
+
+
 以case10为例。
 
 `A<8, 8>[i, j] = (B<10, 8>[i, j] + B<10, 8>[i + 1, j] + B<10, 8>[i + 2, j]) / 3.0;`
