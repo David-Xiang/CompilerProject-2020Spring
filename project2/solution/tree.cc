@@ -52,6 +52,26 @@ string gen_cal(Env & env, StmtNode & stmt)
     ostringstream oss;
     // Left
     //Tensor & curr = env.tensors[stmt.lhsNode->tRefNode->paramterIndex];
+    // "name": "grad_case1",
+    // "ins": ["A", "B"],
+    // "outs": ["C"],
+    // "data_type": "float",
+    // "kernel": "C<4, 16>[i, j] = A<4, 16>[i, j] * B<4, 16>[i, j] + 1.0;",
+    // "grad_to": ["A"]
+
+    // current : dA<4,16>[i,j] += B<4,16>[i,j] * C<4,16>[i,j];
+
+    // Next to do : dA<4,16>[i,j] += B<4,16>[i,j] * dC<4,16>[i,j]; (看 (is_out)?"d":"")
+
+    // Second Next to do : 完整的for代码
+
+    // Third Next to do: dB[i+1,j] += dA[i,j]/3.0 ---> dB[u,j] += dA[u-1,j]/3.0 (令u=i+1)
+    // case 6:  dB<2, 16, 7, 7>[n, c, p + r, q + s] = dA<2, 8, 5, 5>[n, k, p, q] * C<8, 16, 3, 3>[k, c, r, s];",
+    //  ----> 令h = p + r ; r = h - p 所有单独的r都用代入h-p代入
+    //  ----> 令w = q + s ; s = w - q 同上
+
+    // dB<2, 16, 7, 7>[n, c, h, w] = dA<2, 8, 5, 5>[n, k, p, q] * C<8, 16, 3, 3>[k, c, h - p, w - q];"
+
     oss <<"d";
     oss << gen_tref(env, *(stmt.lhsNode->tRefNode));
     oss << "+=" ;
