@@ -9,7 +9,7 @@
 #include <string>
 
 
-int main() {
+int main_2() {
     /* add your solutions */
     return 0;
 }

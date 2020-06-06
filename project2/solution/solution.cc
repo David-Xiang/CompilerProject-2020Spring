@@ -16,7 +16,6 @@ int main() {
     Json::Value cases;
 
     vector<string> paths;
-    paths.push_back("./cases/example.json");
     for (int i = 0; i <= 10; i++) {
         paths.push_back("./cases/case" + to_string(i) + ".json");
     }
@@ -29,8 +28,12 @@ int main() {
             get_env_from_json(cases, env);
             yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
             yyparse(&env);
-            string save_path = "./kernels/"+env.name+".cc";
-            gen_and_save(save_path, env, *root);
+            string save_path = "./kernels/grad_"+env.name+".cc";
+            //check_env(env);
+            //gen_and_save(save_path, env, *root);
+            for (int i = 0; i < root->stmtNodes.size(); i++) {
+                print_info(env, *(root->stmtNodes[i]));
+            }
         }
     }
 }
@@ -47,6 +50,7 @@ void check_env(Env & env)
         {
             cout <<  env.tensors[i].shape[j] << ' ';
         }
+        cout << "require_grad:" << ((env.tensors[i].require_grad)?"yes":"no") << ' ' ;
     }
     cout << endl;
 }
@@ -64,7 +68,7 @@ void get_env_from_json(Json::Value value, Env & env)
 
     for (int i = 0; i < value["ins"].size(); ++i)
     {
-        Tensor t;
+        Tensor t;t.require_grad=false;t.is_out=false;
         t.name = value["ins"][i].asString();
         if (params.find(t.name) == params.end())
         {
@@ -75,7 +79,7 @@ void get_env_from_json(Json::Value value, Env & env)
 
     for (int i = 0; i < value["outs"].size(); ++i)
     {
-        Tensor t;
+        Tensor t;t.require_grad=false;t.is_out=true;
         t.name = value["outs"][i].asString();
         if (params.find(t.name) == params.end())
         {
@@ -84,4 +88,15 @@ void get_env_from_json(Json::Value value, Env & env)
         }
     }
 
+    for (int i = 0; i < value["grad_to"].size(); ++i)
+    {
+        string gname = value["grad_to"][i].asString();
+        for (int j = 0 ; j<env.tensors.size() ; j++)
+        {
+            if (env.tensors[j].name == gname)
+            {
+                env.tensors[j].require_grad=true; // record grad_to info.
+            }
+        }
+    }
 }

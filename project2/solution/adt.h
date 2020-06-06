@@ -40,6 +40,8 @@ class Tensor {
 public:
     string name;
     vector<int> shape;
+    bool is_out; // 是否为输出
+    bool require_grad; // 是否需要梯度
 };
 
 class Variable {
@@ -55,6 +57,7 @@ public:
     string name;
     bool isInt;
     vector<Tensor> tensors; // 输入参数名称及形状，对应作业描述中的id
+
 };
 
 class ConstNode {
@@ -107,6 +110,7 @@ public:
     ConstNode* constNode;    // constref有效
     Operation op;           // binary有效
     vector<Variable> variables;     // 循环变量名称以及取值上下界
+    StmtNode* gradNode; // 计算梯度的表达式树的根节点。
 };
 
 class LHSNode {
