@@ -53,9 +53,9 @@ string gen_cal(Env & env, StmtNode & stmt)
     // Left
     //Tensor & curr = env.tensors[stmt.lhsNode->tRefNode->paramterIndex];
     oss <<"d";
-    oss << gen_tref(env, *(stmt.lhsNode->tRefNode));
+    oss << gen_tref(env, stmt, *(stmt.lhsNode->tRefNode));
     oss << "+=" ;
-    oss << gen_rhs(env, *stmt.rhsNode);
+    oss << gen_rhs(env, stmt, *stmt.rhsNode);
     return oss.str();
 }
 

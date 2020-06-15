@@ -7,6 +7,7 @@ using namespace std;
 
 class Tensor;           // ins和outs中出现的张量
 class Variable;         // 在for中出现的循环变量，需要推导其取值范围
+class ReplacementNode;  // 用作替换的变量及替换方式
 class Env;              // json文件的信息
 class RootNode;
 class StmtNode;
@@ -51,6 +52,15 @@ public:
     bool complex; // 是否包含多个变量
 };
 
+class ReplacementNode{      // 以 h=p+r 替代r为例，即r替换为 h-p
+public:
+    int indexToReplace;     // 被替代变量的index index(r)
+    Variable subtitute;     // 替代变量 h, lb = p.lb+r.lb, ub = p.ub+r.ub
+    bool withConst;         // 替代变量后面跟常量 还是变量
+    Operation opWith;       // 替代变量后面的运算 -
+    int withConstVal;             // withIndex = true 则表示替代变量后面的变量p下标，否则表示常量大小
+    int withVariableIndex;
+};
 
 class Env {
 public:
@@ -123,6 +133,7 @@ public:
     vector<Variable> variables;     // 循环变量名称以及取值上下界
     LHSNode* lhsNode;
     RHSNode* rhsNode;
+    vector<ReplacementNode> replacements; // 在本stmt中用作替换的变量，在replace_check()之前为空
 };
 
 class RootNode {

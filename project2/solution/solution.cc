@@ -1,6 +1,7 @@
 #include "hw2c.tab.c"
 #include "lex.yy.c"
 #include "solution.h"
+#include "mock_replace_index.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -12,30 +13,31 @@
 extern RootNode * root;
 
 int main() {
-    Json::Reader reader;
-    Json::Value cases;
+    mock_replace_index_main();
+    // Json::Reader reader;
+    // Json::Value cases;
 
-    vector<string> paths;
-    for (int i = 0; i <= 10; i++) {
-        paths.push_back("./cases/case" + to_string(i) + ".json");
-    }
+    // vector<string> paths;
+    // for (int i = 0; i <= 10; i++) {
+    //     paths.push_back("./cases/case" + to_string(i) + ".json");
+    // }
 
-    for (int i = 0; i < paths.size(); i++) {
-        ifstream file(paths[i]);
-        if (reader.parse(file, cases)) {
-            Env env;
-            string path_example;
-            get_env_from_json(cases, env);
-            yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
-            yyparse(&env);
-            string save_path = "./kernels/grad_"+env.name+".cc";
-            //check_env(env);
-            //gen_and_save(save_path, env, *root);
-            for (int i = 0; i < root->stmtNodes.size(); i++) {
-                print_info(env, *(root->stmtNodes[i]));
-            }
-        }
-    }
+    // for (int i = 0; i < paths.size(); i++) {
+    //     ifstream file(paths[i]);
+    //     if (reader.parse(file, cases)) {
+    //         Env env;
+    //         string path_example;
+    //         get_env_from_json(cases, env);
+    //         yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+    //         yyparse(&env);
+    //         string save_path = "./kernels/grad_"+env.name+".cc";
+    //         //check_env(env);
+    //         //gen_and_save(save_path, env, *root);
+    //         for (int i = 0; i < root->stmtNodes.size(); i++) {
+    //             print_info(env, *(root->stmtNodes[i]));
+    //         }
+    //     }
+    // }
 }
 
 void check_env(Env & env)
