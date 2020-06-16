@@ -7,6 +7,6 @@ void backprop(Env& env, RHSNode& RHS);
 
 
 // To be modified
-void print_info(Env & env, StmtNode & stmt);
 string gen_cal(Env & env, StmtNode & stmt);
+RootNode * gen_grad_root(Env & env, RootNode & root);
 #endif

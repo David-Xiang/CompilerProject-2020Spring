@@ -13,31 +13,38 @@
 extern RootNode * root;
 
 int main() {
-    mock_replace_index_main();
-    // Json::Reader reader;
-    // Json::Value cases;
+    // mock_replace_index_main();
+    Json::Reader reader;
+    Json::Value cases;
 
-    // vector<string> paths;
-    // for (int i = 0; i <= 10; i++) {
-    //     paths.push_back("./cases/case" + to_string(i) + ".json");
-    // }
+    vector<string> paths;
+    for (int i = 1; i <= 10; i++) {
+        
+        paths.push_back("./cases/case" + to_string(i) + ".json");
+    }
+    //paths.push_back("./cases/case1.json");
 
-    // for (int i = 0; i < paths.size(); i++) {
-    //     ifstream file(paths[i]);
-    //     if (reader.parse(file, cases)) {
-    //         Env env;
-    //         string path_example;
-    //         get_env_from_json(cases, env);
-    //         yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
-    //         yyparse(&env);
-    //         string save_path = "./kernels/grad_"+env.name+".cc";
-    //         //check_env(env);
-    //         //gen_and_save(save_path, env, *root);
-    //         for (int i = 0; i < root->stmtNodes.size(); i++) {
-    //             print_info(env, *(root->stmtNodes[i]));
-    //         }
-    //     }
-    // }
+    for (int i = 0; i < paths.size(); i++) {
+        ifstream file(paths[i]);
+        if (reader.parse(file, cases)) {
+            Env env;
+            string path_example;
+            get_env_from_json(cases, env);
+            yy_switch_to_buffer(yy_scan_string(cases["kernel"].asString().c_str()));
+            yyparse(&env);
+            string save_path = "./kernels/"+env.name+".cc"; 
+            //check_env(env);
+            for (int j = 0; j < root->stmtNodes.size(); j++) {
+                gen_grad(env, *(root->stmtNodes[j]));
+            }
+            RootNode * gradroot = gen_grad_root(env, *root);
+            replace_check(env, *gradroot);
+            //gen_and_save(save_path, env, *gradroot);
+            for (int j = 0; j < gradroot->stmtNodes.size(); j++) {
+                cout<<gen_cal(env, *(gradroot->stmtNodes[j]))<<endl;
+            }
+        }
+    }
 }
 
 void check_env(Env & env)

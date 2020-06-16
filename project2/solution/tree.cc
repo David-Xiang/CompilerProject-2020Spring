@@ -10,11 +10,14 @@
 
 using namespace std;
 
-void print_info(Env & env, StmtNode & stmt)
+RootNode * gen_grad_root(Env & env, RootNode & root)
 {
-    vector<StmtNode*> target;
+    RootNode * grad_root= new RootNode;
     queue<RHSNode*> myqueue;
-    myqueue.push(stmt.rhsNode);
+    for (int i =0;i<root.stmtNodes.size();i++)
+    {
+        myqueue.push(root.stmtNodes[i]->rhsNode);
+    }
     while(!myqueue.empty())
     {
         RHSNode * curr = myqueue.front();  myqueue.pop();
@@ -32,7 +35,7 @@ void print_info(Env & env, StmtNode & stmt)
         case RHSType::tref:
             if (env.tensors[curr->tRefNode->paramterIndex].require_grad)
             {
-                target.push_back(curr->gradNode);
+                grad_root->stmtNodes.push_back(curr->gradNode);
             }
             break;
         
@@ -40,12 +43,9 @@ void print_info(Env & env, StmtNode & stmt)
             break;
         }
     }
-
-    for (int i=0;i<target.size();++i)
-    {
-        cout << gen_cal(env, *target[i]) <<endl;
-    }
+    return grad_root;
 }
+
 
 string gen_cal(Env & env, StmtNode & stmt)
 {
@@ -92,96 +92,110 @@ void backprop(Env& env, RHSNode& RHS)
 {
     switch (RHS.type)
     {
-    case RHSType::binary:
-        switch (RHS.op)
+        case RHSType::binary:
         {
-        case Operation::plus:
-            RHS.lnode->gradNode = RHS.gradNode;
-            RHS.rnode->gradNode = RHS.gradNode;
-            break;
-                
-        case Operation::minus:
-            RHS.lnode->gradNode = RHS.gradNode;
-            RHS.rnode->gradNode = new StmtNode;
-            RHS.rnode->gradNode->rhsNode = new RHSNode;
-            RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
-            RHS.rnode->gradNode->rhsNode->op = Operation::times;
-            RHS.rnode->gradNode->rhsNode->rnode = RHS.gradNode;
-            RHS.rnode->gradNode->rhsNode->lnode = new RHSNode;
-            RHS.rnode->gradNode->rhsNode->lnode.type = RHSType::constref;
-            RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode;
-            RHS.rnode->gradNode->rhsNode->lnode->constNode.isInt = true;
-            RHS.rnode->gradNode->rhsNode->lnode->constNode.intVal = -1;
-            break;
+            switch (RHS.op)
+            {
+                case Operation::plus:
+                    RHS.lnode->gradNode = RHS.gradNode;
+                    RHS.rnode->gradNode = RHS.gradNode;
+                    break;
+                        
+                case Operation::minus:
+                    RHS.lnode->gradNode = RHS.gradNode;
+                    RHS.rnode->gradNode = new StmtNode;
+                    RHS.rnode->gradNode->rhsNode = new RHSNode;
+                    RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
+                    RHS.rnode->gradNode->rhsNode->op = Operation::times;
+                    RHS.rnode->gradNode->rhsNode->rnode = RHS.gradNode->rhsNode;
+                    RHS.rnode->gradNode->rhsNode->lnode = new RHSNode;
+                    RHS.rnode->gradNode->rhsNode->lnode->type = RHSType::constref;
+                    RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode;
+                    RHS.rnode->gradNode->rhsNode->lnode->constNode->isInt = true;
+                    RHS.rnode->gradNode->rhsNode->lnode->constNode->intVal = -1;
+                    break;
 
-        case Operation::times:
-            RHS.lnode->gradNode = new StmtNode;
-            RHS.lnode->gradNode->rhsNode = new RHSNode;
-            RHS.rnode->gradNode = new StmtNode;
-            RHS.rnode->gradNode->rhsNode = new RHSNode;
-                
-            RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
-            RHS.lnode->gradNode->rhsNode->op = Operation::times;
-            RHS.lnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
-            RHS.lnode->gradNode->rhsNode->rnode = RHS.rnode;
+                case Operation::times:
+                    RHS.lnode->gradNode = new StmtNode;
+                    RHS.lnode->gradNode->rhsNode = new RHSNode;
+                    RHS.rnode->gradNode = new StmtNode;
+                    RHS.rnode->gradNode->rhsNode = new RHSNode;
+                        
+                    RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
+                    RHS.lnode->gradNode->rhsNode->op = Operation::times;
+                    RHS.lnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
+                    RHS.lnode->gradNode->rhsNode->rnode = RHS.rnode;
 
-            RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
-            RHS.rnode->gradNode->rhsNode->op = Operation::times;
-            RHS.rnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
-            RHS.rnode->gradNode->rhsNode->rnode = RHS.lnode;
-            // Merge Variable ! 
-            break;
-                
-        case Operation::divide:
-            RHS.lnode->gradNode = new StmtNode;
-            RHS.lnode->gradNode->rhsNode = new RHSNode;
-            RHS.rnode->gradNode = new StmtNode;
-            RHS.rnode->gradNode->rhsNode = new RHSNode;
-            
-            RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
-            RHS.lnode->gradNode->rhsNode->op = Operation::divide;
-            RHS.lnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
-            RHS.lnode->gradNode->rhsNode->rnode = RHS.rnode;
-            
-            RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
-            RHS.rnode->gradNode->rhsNode->op = Operation::times;
-            RHS.rnode->gradNode->rhsNode->lnode = new RHSNode;
-            RHS.rnode->gradNode->rhsNode->lnode->type = RHSType::constref;
-            RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode;
-            RHS.rnode->gradNode->rhsNode->lnode->constNode.isInt = true;
-            RHS.rnode->gradNode->rhsNode->lnode->constNode.intVal = -1;
-                
-            RHSNode* mynode = new RHSNode; //right child(tree)
-            mynode->op = Operation::divide;
-            mynode->lnode = new RHSNode;
-            mynode->lnode->op = Operation::times;
-            mynode->lnode->lnode = RHS.lnode;
-            mynode->lnode->rnode = RHS.gradNode->rhsNode;
-            mynode->rnode->lnode = RHS.rnode;
-            mynode->rnode->rnode = RHS.rnode;
-            RHS.rnode->gradNode->rhsNode->rnode = mynode;
-            break;
-        default:
-            cerr<<"Not Implemented!"<<endl;
+                    RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
+                    RHS.rnode->gradNode->rhsNode->op = Operation::times;
+                    RHS.rnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
+                    RHS.rnode->gradNode->rhsNode->rnode = RHS.lnode;
+                    // Merge Variable ! 
+                    break;
+                        
+                case Operation::divide:
+                {
+                    RHS.lnode->gradNode = new StmtNode;
+                    RHS.lnode->gradNode->rhsNode = new RHSNode;
+                    RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
+                    RHS.lnode->gradNode->rhsNode->op = Operation::divide;
+                    RHS.lnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
+                    RHS.lnode->gradNode->rhsNode->rnode = RHS.rnode;
+                    
+                    // RHS.rnode->gradNode = new StmtNode;
+                    // RHS.rnode->gradNode->rhsNode = new RHSNode;
+                    // RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
+                    // RHS.rnode->gradNode->rhsNode->op = Operation::times;
+                    // RHS.rnode->gradNode->rhsNode->lnode = new RHSNode;
+                    // RHS.rnode->gradNode->rhsNode->lnode->type = RHSType::constref;
+                    // RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode;
+                    // RHS.rnode->gradNode->rhsNode->lnode->constNode->isInt = true;
+                    // RHS.rnode->gradNode->rhsNode->lnode->constNode->intVal = -1;
+
+                    // RHSNode* mynode = new RHSNode;
+                    // mynode->type = RHSType::binary;
+                    // mynode->op = Operation::divide;
+                    // mynode->lnode = new RHSNode;
+                    // mynode->lnode->type = RHSType::binary;
+                    // mynode->lnode->op = Operation::times;
+                    // mynode->lnode->lnode = RHS.lnode;
+                    // mynode->lnode->rnode = RHS.gradNode->rhsNode;
+                    // mynode->rnode->lnode = RHS.rnode;
+                    // mynode->rnode->rnode = RHS.rnode;
+                    // RHS.rnode->gradNode->rhsNode->rnode = mynode;
+                    break;
+                }
+
+                default:
+                    cerr<<"Not Implemented!"<<endl;
+                    break;
+            }
+
+            backprop(env, *RHS.lnode);
+            backprop(env, *RHS.rnode);
+        break;
+        }
+
+        case RHSType::uniary:
+        {
+            RHS.lnode->gradNode = RHS.gradNode;
+            backprop(env, *RHS.lnode);
             break;
         }
 
-        backprop(env, *RHS.lnode);
-        backprop(env, *RHS.rnode);
-    break;
-
-    case RHSType::uniary:
-        RHS.lnode->gradNode = RHS.gradNode;
-        backprop(env, *RHS.lnode);
-    break;
-
-    case RHSType::tref:
-    if (env.tensors[RHS.tRefNode->paramterIndex].require_grad)
-        RHS.gradNode->lhsNode = new LHSNode;
-        RHS.gradNode->lhsNode->tRefNode = RHS.tRefNode;
-    break;
-    
-    default:
-        break;
+        case RHSType::tref:
+        {
+            if (env.tensors[RHS.tRefNode->paramterIndex].require_grad)
+            {
+                RHS.gradNode->lhsNode = new LHSNode;
+                RHS.gradNode->lhsNode->tRefNode = RHS.tRefNode;
+            }
+            break;
+        }
+        
+        default:
+        {
+            break;
+        }
     }
 }

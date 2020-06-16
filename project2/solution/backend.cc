@@ -266,6 +266,10 @@ string gen_rhs(Env& env, StmtNode& stmt, RHSNode& rhsNode) {
 string gen_tref(Env& env, StmtNode& stmt, TRefNode& tRefNode) {
     ostringstream oss;
     vector<IdExprNode*> & idExprList = tRefNode.aListNode->idExprList;
+    // if output == true, needs "d".
+    if (env.tensors[tRefNode.paramterIndex].is_out)
+        oss << "d";
+
     oss << env.tensors[tRefNode.paramterIndex].name;
     for (int i = 0; i < idExprList.size(); i++) {
         oss << "[";
