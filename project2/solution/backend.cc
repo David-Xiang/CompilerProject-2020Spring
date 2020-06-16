@@ -79,6 +79,9 @@ void replace_check(Env& env, RootNode& root) {
 void gen_and_save(string path, Env& env, RootNode& root) {
     ostringstream oss;
     oss << HEADER << endl << endl;
+
+    gen_body(env, root); // check which input tensor is used.
+
     oss << RETURN_TYPE << " " << env.name << gen_parameters(env) << "{" << endl;
     oss << gen_body(env, root) << "}" << endl;
     string src = oss.str();
@@ -90,19 +93,44 @@ void gen_and_save(string path, Env& env, RootNode& root) {
 
 string gen_parameters(Env& env) {
     string desc = env.isInt ? "int" : "float";
-
+    bool _first =true;
     ostringstream oss;
     oss << "(";
     int size = env.tensors.size();
-    for (int i = 0; i < size; i++) {
-        oss << desc << " (&" << ((env.tensors[i].is_out||env.tensors[i].require_grad)?"d":"") << env.tensors[i].name << ")";
+    for (int i = 0; i < size; i++) { // in
+        if (env.tensors[i].is_out) continue;
+        if (!env.tensors[i].is_used) continue;
+
+        if (_first) _first=false; else oss<<", ";
+        oss << desc << " (&" << env.tensors[i].name << ")";
         vector<int> &shape = env.tensors[i].shape;
         bool isScalar = (shape.size() == 1 && shape[0] == 1);
         for (int j = 0; !isScalar && j < shape.size(); j++) {
             oss << "[" << env.tensors[i].shape[j] << "]";
         }
-        if (i < size - 1) {
-            oss << ", ";
+        
+    }
+    for (int i = 0; i < size; i++) { // out
+        if (!env.tensors[i].is_out) continue;
+
+        if (_first) _first=false; else oss<<", ";
+        oss << desc << " (&" << "d" << env.tensors[i].name << ")";
+        vector<int> &shape = env.tensors[i].shape;
+        bool isScalar = (shape.size() == 1 && shape[0] == 1);
+        for (int j = 0; !isScalar && j < shape.size(); j++) {
+            oss << "[" << env.tensors[i].shape[j] << "]";
+        }
+    }
+    for (int i = 0; i < size; i++) { // grad_to
+        if (!env.tensors[i].require_grad) continue;
+
+        if (_first) _first=false; else oss<<", ";
+
+        oss << desc << " (&" << "d" << env.tensors[i].name << ")";
+        vector<int> &shape = env.tensors[i].shape;
+        bool isScalar = (shape.size() == 1 && shape[0] == 1);
+        for (int j = 0; !isScalar && j < shape.size(); j++) {
+            oss << "[" << env.tensors[i].shape[j] << "]";
         }
     }
 
@@ -271,6 +299,7 @@ string gen_tref(Env& env, StmtNode& stmt, TRefNode& tRefNode) {
         oss << "d";
 
     oss << env.tensors[tRefNode.paramterIndex].name;
+    env.tensors[tRefNode.paramterIndex].is_used=true;
     for (int i = 0; i < idExprList.size(); i++) {
         oss << "[";
         for (int j = 0; j < idExprList[i]->ids.size(); j++) {

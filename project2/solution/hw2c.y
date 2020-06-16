@@ -47,7 +47,7 @@ using namespace std;
 %token SEMI
 %left '<' '>'
 %left '+' '-'
-%left '*' '/' '%'
+%right '*' '/' '%'
 
 %%
 
@@ -291,6 +291,15 @@ IdExpr_term:	ID
 			$$ -> op = $1 -> op;
 			$$ -> op.push_back(Operation::floor_divide);
 			$$ -> num.push_back($4)
+		}
+	|	IdExpr '%' INT
+		{
+			$$ = new IdExprNode();
+			$$ -> expr = $1 -> expr + '%' + to_string($3);
+			$$ -> ids = $1 -> ids;
+			$$ -> op = $1 -> op;
+			$$ -> op.push_back(Operation::mod);
+			$$ -> num.push_back($3)
 		}
 	|	'(' IdExpr ')'
 		{

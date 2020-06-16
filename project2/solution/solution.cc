@@ -19,7 +19,7 @@ int main() {
 
     vector<string> paths;
     for (int i = 1; i <= 10; i++) {
-        
+        if (i==8) continue; //skip case 8
         paths.push_back("./cases/case" + to_string(i) + ".json");
     }
 
@@ -79,7 +79,7 @@ void get_env_from_json(Json::Value value, Env & env)
 
     for (int i = 0; i < value["ins"].size(); ++i)
     {
-        Tensor t;t.require_grad=false;t.is_out=false;
+        Tensor t;t.require_grad=false;t.is_out=false;t.is_used=false;
         t.name = value["ins"][i].asString();
         if (params.find(t.name) == params.end())
         {
@@ -90,7 +90,7 @@ void get_env_from_json(Json::Value value, Env & env)
 
     for (int i = 0; i < value["outs"].size(); ++i)
     {
-        Tensor t;t.require_grad=false;t.is_out=true;
+        Tensor t;t.require_grad=false;t.is_out=true;t.is_used=false;
         t.name = value["outs"][i].asString();
         if (params.find(t.name) == params.end())
         {

@@ -43,6 +43,7 @@ public:
     vector<int> shape;
     bool is_out; // 是否为输出
     bool require_grad; // 是否需要梯度
+    bool is_used;
 };
 
 class Variable {

@@ -1,6 +1,6 @@
 #include "../run2.h"
 
-void grad_case10(float (&dB)[10][8], float (&dA)[8][8]) {
+void grad_case10(float (&dA)[8][8], float (&dB)[10][8]) {
     for (int h = 2; h < 10; ++h) {
         for (int j = 0; j < 8; ++j) {
             if ((h - 2 >= 0) && (h - 2 < 8)) {
