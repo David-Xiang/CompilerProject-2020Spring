@@ -99,24 +99,68 @@ void backprop(Env& env, RHSNode& RHS)
             RHS.lnode->gradNode = RHS.gradNode;
             RHS.rnode->gradNode = RHS.gradNode;
             break;
+                
+        case Operation::minus:
+            RHS.lnode->gradNode = RHS.gradNode;
+            RHS.rnode->gradNode = new StmtNode;
+            RHS.rnode->gradNode->rhsNode = new RHSNode;
+            RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
+            RHS.rnode->gradNode->rhsNode->op = Operation::times;
+            RHS.rnode->gradNode->rhsNode->rnode = RHS.gradNode;
+            RHS.rnode->gradNode->rhsNode->lnode = new RHSNode;
+            RHS.rnode->gradNode->rhsNode->lnode.type = RHSType::constref;
+            RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode;
+            RHS.rnode->gradNode->rhsNode->lnode->constNode.isInt = true;
+            RHS.rnode->gradNode->rhsNode->lnode->constNode.intVal = -1;
+            break;
+
         case Operation::times:
             RHS.lnode->gradNode = new StmtNode;
             RHS.lnode->gradNode->rhsNode = new RHSNode;
+            RHS.rnode->gradNode = new StmtNode;
+            RHS.rnode->gradNode->rhsNode = new RHSNode;
+                
             RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
             RHS.lnode->gradNode->rhsNode->op = Operation::times;
             RHS.lnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
             RHS.lnode->gradNode->rhsNode->rnode = RHS.rnode;
-            // Merge Variable ! 
 
-            RHS.rnode->gradNode = new StmtNode;
-            RHS.rnode->gradNode->rhsNode = new RHSNode;
             RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
             RHS.rnode->gradNode->rhsNode->op = Operation::times;
             RHS.rnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
             RHS.rnode->gradNode->rhsNode->rnode = RHS.lnode;
             // Merge Variable ! 
             break;
-        
+                
+        case Operation::divide:
+            RHS.lnode->gradNode = new StmtNode;
+            RHS.lnode->gradNode->rhsNode = new RHSNode;
+            RHS.rnode->gradNode = new StmtNode;
+            RHS.rnode->gradNode->rhsNode = new RHSNode;
+            
+            RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
+            RHS.lnode->gradNode->rhsNode->op = Operation::divide;
+            RHS.lnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
+            RHS.lnode->gradNode->rhsNode->rnode = RHS.rnode;
+            
+            RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
+            RHS.rnode->gradNode->rhsNode->op = Operation::times;
+            RHS.rnode->gradNode->rhsNode->lnode = new RHSNode;
+            RHS.rnode->gradNode->rhsNode->lnode->type = RHSType::constref;
+            RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode;
+            RHS.rnode->gradNode->rhsNode->lnode->constNode.isInt = true;
+            RHS.rnode->gradNode->rhsNode->lnode->constNode.intVal = -1;
+                
+            RHSNode* mynode = new RHSNode; //right child(tree)
+            mynode->op = Operation::divide;
+            mynode->lnode = new RHSNode;
+            mynode->lnode->op = Operation::times;
+            mynode->lnode->lnode = RHS.lnode;
+            mynode->lnode->rnode = RHS.gradNode->rhsNode;
+            mynode->rnode->lnode = RHS.rnode;
+            mynode->rnode->rnode = RHS.rnode;
+            RHS.rnode->gradNode->rhsNode->rnode = mynode;
+            break;
         default:
             cerr<<"Not Implemented!"<<endl;
             break;
