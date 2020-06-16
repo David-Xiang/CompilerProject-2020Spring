@@ -4,6 +4,7 @@
 #include "adt.h"
 void gen_and_save(string path, Env& env, RootNode& root);
 void replace_check(Env& env, RootNode& root);
+string get_op_string(Operation op);
 string gen_parameters(Env& env);
 string gen_body(Env& env, RootNode& root);
 string gen_loop(Env& env, StmtNode& stmt, int loop);

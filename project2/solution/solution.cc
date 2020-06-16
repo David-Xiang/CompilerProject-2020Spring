@@ -22,7 +22,6 @@ int main() {
         
         paths.push_back("./cases/case" + to_string(i) + ".json");
     }
-    //paths.push_back("./cases/case1.json");
 
     for (int i = 0; i < paths.size(); i++) {
         ifstream file(paths[i]);
@@ -34,15 +33,18 @@ int main() {
             yyparse(&env);
             string save_path = "./kernels/"+env.name+".cc"; 
             //check_env(env);
+            
             for (int j = 0; j < root->stmtNodes.size(); j++) {
                 gen_grad(env, *(root->stmtNodes[j]));
             }
             RootNode * gradroot = gen_grad_root(env, *root);
+            cout<<"gen_grad_root_end"<<endl;
             replace_check(env, *gradroot);
-            //gen_and_save(save_path, env, *gradroot);
-            for (int j = 0; j < gradroot->stmtNodes.size(); j++) {
-                cout<<gen_cal(env, *(gradroot->stmtNodes[j]))<<endl;
-            }
+
+            gen_and_save(save_path, env, *gradroot);
+            // for (int j = 0; j < gradroot->stmtNodes.size(); j++) {
+            //     cout<<gen_cal(env, *(gradroot->stmtNodes[j]))<<endl;
+            // }
         }
     }
 }

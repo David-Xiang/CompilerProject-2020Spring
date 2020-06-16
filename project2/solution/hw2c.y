@@ -240,18 +240,27 @@ IdExpr:	IdExpr_term '+' IdExpr_term
 			$$ -> expr = $1 -> expr + '+' + $3 -> expr;
 			$$ -> ids.insert($$ -> ids.end(), $1 -> ids.begin(), $1 -> ids.end());
 			$$ -> ids.insert($$ -> ids.end(), $3 -> ids.begin(), $3 -> ids.end());
+			$$ -> op.insert($$ -> op.end(), $1 -> op.begin(), $1 -> op.end());
+			$$ -> op.insert($$ -> op.end(), $3 -> op.begin(), $3 -> op.end());
+			$$ -> op.push_back(Operation::plus);
 		}
 	|	IdExpr_term '+' INT
 		{
 			$$ = new IdExprNode();
 			$$ -> expr = $1 -> expr + '+' + to_string($3);
 			$$ -> ids = $1 -> ids;
+			$$ -> op = $1 -> op;
+			$$ -> op.push_back(Operation::plus);
+			$$ -> num.push_back($3)
 		}
 	|	IdExpr_term '-' INT
 		{
 			$$ = new IdExprNode();
 			$$ -> expr = $1 -> expr + '-' + to_string($3);
 			$$ -> ids = $1 -> ids;
+			$$ -> op = $1 -> op;
+			$$ -> op.push_back(Operation::minus);
+			$$ -> num.push_back($3)
 		}
 	| 	IdExpr_term
 		{
@@ -270,18 +279,25 @@ IdExpr_term:	ID
 			$$ = new IdExprNode();
 			$$ -> expr = $1 -> expr + '*' + to_string($3);
 			$$ -> ids = $1 -> ids;
+			$$ -> op = $1 -> op;
+			$$ -> op.push_back(Operation::times);
+			$$ -> num.push_back($3)
 		}
 	|	IdExpr '/' '/' INT
 		{
 			$$ = new IdExprNode();
 			$$ -> expr = $1 -> expr + '/' + to_string($4);
 			$$ -> ids = $1 -> ids;
+			$$ -> op = $1 -> op;
+			$$ -> op.push_back(Operation::floor_divide);
+			$$ -> num.push_back($4)
 		}
 	|	'(' IdExpr ')'
 		{
 			$$ = new IdExprNode();
 			$$ -> expr = '(' + $2 -> expr + ')';
 			$$ -> ids = $2 -> ids;
+			$$ -> op = $2 -> op;
 			delete $2;
 		}
 	;

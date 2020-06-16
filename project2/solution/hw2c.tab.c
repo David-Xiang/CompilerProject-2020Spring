@@ -447,8 +447,8 @@ static const yytype_uint16 yyrline[] =
 {
        0,    54,    54,    62,    67,    75,    84,    91,   100,   109,
      116,   125,   134,   143,   152,   159,   166,   172,   180,   186,
-     194,   199,   206,   217,   226,   231,   238,   245,   251,   257,
-     263,   269,   275,   281
+     194,   199,   206,   216,   225,   230,   237,   247,   256,   265,
+     271,   277,   286,   295
 };
 #endif
 
@@ -1587,13 +1587,12 @@ yyreduce:
 			(yyval.trefNode) -> cListNode = (yyvsp[(3) - (7)].clistNode);
 			(yyval.trefNode) -> aListNode = (yyvsp[(6) - (7)].alistNode);
 			(yyval.trefNode) -> variables = getVariableBounds((yyvsp[(3) - (7)].clistNode), (yyvsp[(6) - (7)].alistNode));
-			cout << "length of ID: " << strlen((yyvsp[(1) - (7)].string_value)) << endl;
 			(yyval.trefNode) -> paramterIndex = setTensorsShape((Env *)env, (yyvsp[(1) - (7)].string_value), (yyvsp[(3) - (7)].clistNode));
 		;}
     break;
 
   case 23:
-#line 218 "hw2c.y"
+#line 217 "hw2c.y"
     {
 			(yyval.srefNode) = new SRefNode();
 			(yyval.srefNode) -> cListNode = (yyvsp[(3) - (4)].clistNode);
@@ -1602,7 +1601,7 @@ yyreduce:
     break;
 
   case 24:
-#line 227 "hw2c.y"
+#line 226 "hw2c.y"
     {
 			(yyval.alistNode) = (yyvsp[(1) - (3)].alistNode);
 			(yyval.alistNode) -> idExprList.push_back((yyvsp[(3) - (3)].idexprNode));
@@ -1610,7 +1609,7 @@ yyreduce:
     break;
 
   case 25:
-#line 232 "hw2c.y"
+#line 231 "hw2c.y"
     {
 			(yyval.alistNode) = new AListNode();
 			(yyval.alistNode) -> idExprList.push_back((yyvsp[(1) - (1)].idexprNode)); 
@@ -1618,42 +1617,51 @@ yyreduce:
     break;
 
   case 26:
-#line 239 "hw2c.y"
+#line 238 "hw2c.y"
     {
 			(yyval.idexprNode) = new IdExprNode();
 			(yyval.idexprNode) -> expr = (yyvsp[(1) - (3)].idexprNode) -> expr + '+' + (yyvsp[(3) - (3)].idexprNode) -> expr;
 			(yyval.idexprNode) -> ids.insert((yyval.idexprNode) -> ids.end(), (yyvsp[(1) - (3)].idexprNode) -> ids.begin(), (yyvsp[(1) - (3)].idexprNode) -> ids.end());
 			(yyval.idexprNode) -> ids.insert((yyval.idexprNode) -> ids.end(), (yyvsp[(3) - (3)].idexprNode) -> ids.begin(), (yyvsp[(3) - (3)].idexprNode) -> ids.end());
+			(yyval.idexprNode) -> op.insert((yyval.idexprNode) -> op.end(), (yyvsp[(1) - (3)].idexprNode) -> op.begin(), (yyvsp[(1) - (3)].idexprNode) -> op.end());
+			(yyval.idexprNode) -> op.insert((yyval.idexprNode) -> op.end(), (yyvsp[(3) - (3)].idexprNode) -> op.begin(), (yyvsp[(3) - (3)].idexprNode) -> op.end());
+			(yyval.idexprNode) -> op.push_back(Operation::plus);
 		;}
     break;
 
   case 27:
-#line 246 "hw2c.y"
+#line 248 "hw2c.y"
     {
 			(yyval.idexprNode) = new IdExprNode();
 			(yyval.idexprNode) -> expr = (yyvsp[(1) - (3)].idexprNode) -> expr + '+' + to_string((yyvsp[(3) - (3)].int_value));
 			(yyval.idexprNode) -> ids = (yyvsp[(1) - (3)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(1) - (3)].idexprNode) -> op;
+			(yyval.idexprNode) -> op.push_back(Operation::plus);
+			(yyval.idexprNode) -> num.push_back((yyvsp[(3) - (3)].int_value))
 		;}
     break;
 
   case 28:
-#line 252 "hw2c.y"
+#line 257 "hw2c.y"
     {
 			(yyval.idexprNode) = new IdExprNode();
 			(yyval.idexprNode) -> expr = (yyvsp[(1) - (3)].idexprNode) -> expr + '-' + to_string((yyvsp[(3) - (3)].int_value));
 			(yyval.idexprNode) -> ids = (yyvsp[(1) - (3)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(1) - (3)].idexprNode) -> op;
+			(yyval.idexprNode) -> op.push_back(Operation::minus);
+			(yyval.idexprNode) -> num.push_back((yyvsp[(3) - (3)].int_value))
 		;}
     break;
 
   case 29:
-#line 258 "hw2c.y"
+#line 266 "hw2c.y"
     {
 			(yyval.idexprNode) = (yyvsp[(1) - (1)].idexprNode);
 		;}
     break;
 
   case 30:
-#line 264 "hw2c.y"
+#line 272 "hw2c.y"
     {
 			(yyval.idexprNode) = new IdExprNode();
 			(yyval.idexprNode) -> expr = (yyvsp[(1) - (1)].string_value);
@@ -1662,36 +1670,43 @@ yyreduce:
     break;
 
   case 31:
-#line 270 "hw2c.y"
+#line 278 "hw2c.y"
     {
 			(yyval.idexprNode) = new IdExprNode();
 			(yyval.idexprNode) -> expr = (yyvsp[(1) - (3)].idexprNode) -> expr + '*' + to_string((yyvsp[(3) - (3)].int_value));
 			(yyval.idexprNode) -> ids = (yyvsp[(1) - (3)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(1) - (3)].idexprNode) -> op;
+			(yyval.idexprNode) -> op.push_back(Operation::times);
+			(yyval.idexprNode) -> num.push_back((yyvsp[(3) - (3)].int_value))
 		;}
     break;
 
   case 32:
-#line 276 "hw2c.y"
+#line 287 "hw2c.y"
     {
 			(yyval.idexprNode) = new IdExprNode();
 			(yyval.idexprNode) -> expr = (yyvsp[(1) - (4)].idexprNode) -> expr + '/' + to_string((yyvsp[(4) - (4)].int_value));
 			(yyval.idexprNode) -> ids = (yyvsp[(1) - (4)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(1) - (4)].idexprNode) -> op;
+			(yyval.idexprNode) -> op.push_back(Operation::floor_divide);
+			(yyval.idexprNode) -> num.push_back((yyvsp[(4) - (4)].int_value))
 		;}
     break;
 
   case 33:
-#line 282 "hw2c.y"
+#line 296 "hw2c.y"
     {
 			(yyval.idexprNode) = new IdExprNode();
 			(yyval.idexprNode) -> expr = '(' + (yyvsp[(2) - (3)].idexprNode) -> expr + ')';
 			(yyval.idexprNode) -> ids = (yyvsp[(2) - (3)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(2) - (3)].idexprNode) -> op;
 			delete (yyvsp[(2) - (3)].idexprNode);
 		;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1695 "hw2c.tab.c"
+#line 1710 "hw2c.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1905,7 +1920,7 @@ yyreturn:
 }
 
 
-#line 290 "hw2c.y"
+#line 305 "hw2c.y"
 
 
 void yyerror(char *msg){

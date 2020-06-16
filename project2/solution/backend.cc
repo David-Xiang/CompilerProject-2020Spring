@@ -81,7 +81,6 @@ void gen_and_save(string path, Env& env, RootNode& root) {
     oss << HEADER << endl << endl;
     oss << RETURN_TYPE << " " << env.name << gen_parameters(env) << "{" << endl;
     oss << gen_body(env, root) << "}" << endl;
-
     string src = oss.str();
 
     ofstream ofile(path, ios::out);
@@ -96,7 +95,7 @@ string gen_parameters(Env& env) {
     oss << "(";
     int size = env.tensors.size();
     for (int i = 0; i < size; i++) {
-        oss << desc << " (&" << env.tensors[i].name << ")";
+        oss << desc << " (&" << ((env.tensors[i].is_out||env.tensors[i].require_grad)?"d":"") << env.tensors[i].name << ")";
         vector<int> &shape = env.tensors[i].shape;
         bool isScalar = (shape.size() == 1 && shape[0] == 1);
         for (int j = 0; !isScalar && j < shape.size(); j++) {
@@ -128,13 +127,13 @@ string gen_loop(Env& env, StmtNode& stmt, int loop) {
     for (int i = 0; i < loop + 1; i++) {
         indent += ONE_TAB;
     }
-
     Variable loopVar = stmt.variables[loop];
     for (int i = 0; i < stmt.replacements.size(); i++) {
         if (stmt.replacements[i].indexToReplace == loop) {
             loopVar = stmt.replacements[i].subtitute;
         }
     }
+
     string var = loopVar.name;
     int lb = loopVar.lowerBound;
     int ub = loopVar.upperBound;
@@ -226,6 +225,7 @@ string get_op_string(Operation op) {
 
 string gen_lhs(Env& env, StmtNode& stmt) {
     ostringstream oss;
+    oss <<"d";
     oss << env.tensors[stmt.lhsNode->tRefNode->paramterIndex].name;
     vector<IdExprNode*> & lhsIdExprList = stmt.lhsNode->tRefNode->aListNode->idExprList;
     for (int i = 0; i < lhsIdExprList.size(); i++) {

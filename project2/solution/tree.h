@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include "adt.h"
+#include "backend.h"
 void gen_grad(Env& env, StmtNode& stmt);
 void backprop(Env& env, RHSNode& RHS);
 

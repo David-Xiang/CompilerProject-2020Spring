@@ -1,5 +1,4 @@
 #include "tree.h"
-#include "backend.h"
 
 #include <vector>
 #include <queue>
@@ -10,9 +9,85 @@
 
 using namespace std;
 
+AListNode * _fork_AListNode(AListNode * source)
+{
+    if (source == NULL) return NULL;
+    AListNode * dest = new AListNode();
+    for (int i=0;i<source->idExprList.size();i++)
+    {
+        dest->idExprList.push_back(new IdExprNode(*source->idExprList[i]));
+        cout<<".."<<endl;
+        // if (dest->idExprList[i]->op.size()==1) {
+        //     cout<<dest->idExprList[i]->ids[0];
+        //     cout<<get_op_string(dest->idExprList[i]->op[0]);
+        //     cout<<dest->idExprList[i]->num[0];
+        // }
+    }
+    return dest;
+}
+
+TRefNode * _fork_TRefNode(TRefNode * source)
+{
+    if (source == NULL) return NULL;
+    cout<<"+"<<endl;
+    TRefNode * dest = new TRefNode(*source);
+    dest->aListNode = _fork_AListNode(source->aListNode);
+    cout<<"+"<<endl;
+    return dest;
+}
+
+RHSNode * _fork_RHSNode(RHSNode * source)
+{   
+    if (source == NULL) return NULL;
+    RHSNode * dest = new RHSNode(*source);
+    switch (source->type)
+        {
+        case RHSType::binary:
+            dest -> lnode = _fork_RHSNode(source->lnode);
+            dest -> rnode = _fork_RHSNode(source->rnode);
+            break;
+
+        case RHSType::uniary:
+            dest -> lnode = _fork_RHSNode(source->lnode);
+            break;
+
+        case RHSType::tref:
+            dest -> tRefNode = _fork_TRefNode(source->tRefNode);
+            break;
+        
+        default:
+            break;
+        }
+    return dest;
+}
+
+LHSNode * _fork_LHSNode(LHSNode * source)
+{
+    if (source == NULL) return NULL;
+    LHSNode * dest = new LHSNode(*source);
+    cout<<"-"<<endl;
+    dest -> tRefNode = _fork_TRefNode(source->tRefNode);
+    cout<<"-"<<endl;
+    return dest;
+}
+
+StmtNode * _fork(StmtNode * source)
+{
+    if (source == NULL) return NULL;
+    StmtNode * dest = new StmtNode(*source);
+    cout<<"?"<<endl;
+    dest->lhsNode = _fork_LHSNode(source->lhsNode);
+    cout<<"?"<<endl;
+    dest->rhsNode = _fork_RHSNode(source->rhsNode);
+    //cout<<"?"<<endl;
+    return dest;
+}
+
+
 RootNode * gen_grad_root(Env & env, RootNode & root)
 {
-    RootNode * grad_root= new RootNode;
+    cout<<"begin_gen_grad_root"<<endl;
+    RootNode * grad_root= new RootNode();
     queue<RHSNode*> myqueue;
     for (int i =0;i<root.stmtNodes.size();i++)
     {
@@ -35,7 +110,8 @@ RootNode * gen_grad_root(Env & env, RootNode & root)
         case RHSType::tref:
             if (env.tensors[curr->tRefNode->paramterIndex].require_grad)
             {
-                grad_root->stmtNodes.push_back(curr->gradNode);
+                cout<<curr->gradNode<<endl;
+                grad_root->stmtNodes.push_back(_fork(curr->gradNode));
             }
             break;
         
@@ -50,30 +126,7 @@ RootNode * gen_grad_root(Env & env, RootNode & root)
 string gen_cal(Env & env, StmtNode & stmt)
 {
     ostringstream oss;
-    // Left
-    //Tensor & curr = env.tensors[stmt.lhsNode->tRefNode->paramterIndex];
-    // "name": "grad_case1",
-    // "ins": ["A", "B"],
-    // "outs": ["C"],
-    // "data_type": "float",
-    // "kernel": "C<4, 16>[i, j] = A<4, 16>[i, j] * B<4, 16>[i, j] + 1.0;",
-    // "grad_to": ["A"]
-
-    // current : dA<4,16>[i,j] += B<4,16>[i,j] * C<4,16>[i,j];
-
-    // Next to do : dA<4,16>[i,j] += B<4,16>[i,j] * dC<4,16>[i,j]; (看 (is_out)?"d":"")
-
-    // Second Next to do : 完整的for代码
-
-    // Third Next to do: dB[i+1,j] += dA[i,j]/3.0 ---> dB[u,j] += dA[u-1,j]/3.0 (令u=i+1)
-    // case 6:  dB<2, 16, 7, 7>[n, c, p + r, q + s] = dA<2, 8, 5, 5>[n, k, p, q] * C<8, 16, 3, 3>[k, c, r, s];",
-    //  ----> 令h = p + r ; r = h - p 所有单独的r都用代入h-p代入
-    //  ----> 令w = q + s ; s = w - q 同上
-
-    // dB<2, 16, 7, 7>[n, c, h, w] = dA<2, 8, 5, 5>[n, k, p, q] * C<8, 16, 3, 3>[k, c, h - p, w - q];"
-
-    oss <<"d";
-    oss << gen_tref(env, stmt, *(stmt.lhsNode->tRefNode));
+    oss << gen_lhs(env, stmt);
     oss << "+=" ;
     oss << gen_rhs(env, stmt, *stmt.rhsNode);
     return oss.str();
@@ -81,10 +134,16 @@ string gen_cal(Env & env, StmtNode & stmt)
 
 void gen_grad(Env& env, StmtNode& stmt)
 {
-    stmt.rhsNode->gradNode = new StmtNode;
-    stmt.rhsNode->gradNode->rhsNode = new RHSNode;
+    stmt.rhsNode->gradNode = new StmtNode();
+    stmt.rhsNode->gradNode->rhsNode = new RHSNode();
     stmt.rhsNode->gradNode->rhsNode->type = RHSType::tref;
     stmt.rhsNode->gradNode->rhsNode->tRefNode = stmt.lhsNode->tRefNode;
+    for (int i=0;i<stmt.variables.size();i++)
+    {
+        //cout<<stmt.variables[i].name<<"["<<stmt.variables[i].lowerBound<<" , "<<stmt.variables[i].upperBound<<")"<<endl;
+        if (!stmt.variables[i].complex)
+            stmt.rhsNode->gradNode->variables.push_back(stmt.variables[i]);
+    }
     backprop(env, *stmt.rhsNode);
 }
 
@@ -97,29 +156,29 @@ void backprop(Env& env, RHSNode& RHS)
             switch (RHS.op)
             {
                 case Operation::plus:
-                    RHS.lnode->gradNode = RHS.gradNode;
-                    RHS.rnode->gradNode = RHS.gradNode;
+                    RHS.lnode->gradNode = _fork(RHS.gradNode);
+                    RHS.rnode->gradNode = _fork(RHS.gradNode);
                     break;
                         
                 case Operation::minus:
-                    RHS.lnode->gradNode = RHS.gradNode;
-                    RHS.rnode->gradNode = new StmtNode;
-                    RHS.rnode->gradNode->rhsNode = new RHSNode;
+                    RHS.lnode->gradNode = _fork(RHS.gradNode);
+                    RHS.rnode->gradNode = new StmtNode();
+                    RHS.rnode->gradNode->rhsNode = new RHSNode();
                     RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
                     RHS.rnode->gradNode->rhsNode->op = Operation::times;
                     RHS.rnode->gradNode->rhsNode->rnode = RHS.gradNode->rhsNode;
-                    RHS.rnode->gradNode->rhsNode->lnode = new RHSNode;
+                    RHS.rnode->gradNode->rhsNode->lnode = new RHSNode();
                     RHS.rnode->gradNode->rhsNode->lnode->type = RHSType::constref;
-                    RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode;
+                    RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode();
                     RHS.rnode->gradNode->rhsNode->lnode->constNode->isInt = true;
                     RHS.rnode->gradNode->rhsNode->lnode->constNode->intVal = -1;
                     break;
 
                 case Operation::times:
-                    RHS.lnode->gradNode = new StmtNode;
-                    RHS.lnode->gradNode->rhsNode = new RHSNode;
-                    RHS.rnode->gradNode = new StmtNode;
-                    RHS.rnode->gradNode->rhsNode = new RHSNode;
+                    RHS.lnode->gradNode = new StmtNode();
+                    RHS.lnode->gradNode->rhsNode = new RHSNode();
+                    RHS.rnode->gradNode = new StmtNode();
+                    RHS.rnode->gradNode->rhsNode = new RHSNode();
                         
                     RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
                     RHS.lnode->gradNode->rhsNode->op = Operation::times;
@@ -135,14 +194,14 @@ void backprop(Env& env, RHSNode& RHS)
                         
                 case Operation::divide:
                 {
-                    RHS.lnode->gradNode = new StmtNode;
-                    RHS.lnode->gradNode->rhsNode = new RHSNode;
+                    RHS.lnode->gradNode = new StmtNode();
+                    RHS.lnode->gradNode->rhsNode = new RHSNode();
                     RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
                     RHS.lnode->gradNode->rhsNode->op = Operation::divide;
                     RHS.lnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
                     RHS.lnode->gradNode->rhsNode->rnode = RHS.rnode;
                     
-                    // RHS.rnode->gradNode = new StmtNode;
+                    RHS.rnode->gradNode = new StmtNode();
                     // RHS.rnode->gradNode->rhsNode = new RHSNode;
                     // RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
                     // RHS.rnode->gradNode->rhsNode->op = Operation::times;
@@ -171,6 +230,8 @@ void backprop(Env& env, RHSNode& RHS)
                     break;
             }
 
+            RHS.lnode->gradNode->variables = RHS.gradNode->variables;
+            RHS.rnode->gradNode->variables = RHS.gradNode->variables;
             backprop(env, *RHS.lnode);
             backprop(env, *RHS.rnode);
         break;
@@ -179,6 +240,7 @@ void backprop(Env& env, RHSNode& RHS)
         case RHSType::uniary:
         {
             RHS.lnode->gradNode = RHS.gradNode;
+            RHS.lnode->gradNode->variables = RHS.gradNode->variables;
             backprop(env, *RHS.lnode);
             break;
         }
@@ -187,7 +249,7 @@ void backprop(Env& env, RHSNode& RHS)
         {
             if (env.tensors[RHS.tRefNode->paramterIndex].require_grad)
             {
-                RHS.gradNode->lhsNode = new LHSNode;
+                RHS.gradNode->lhsNode = new LHSNode();
                 RHS.gradNode->lhsNode->tRefNode = RHS.tRefNode;
             }
             break;

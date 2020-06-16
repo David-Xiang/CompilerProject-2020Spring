@@ -86,16 +86,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include <math.h>
 #include <string.h>
 #include "adt.h"
-
+#include "util.h"
 int yylex(void);
 void yyerror(char*);
 RootNode * root;
-// extern FILE* yyin;
-// extern FILE* yyout;
-// struct TreeNode* root;
+#define YYPARSE_PARAM env
+
+using namespace std;
 
 
 /* Enabling traces.  */
@@ -117,7 +118,26 @@ RootNode * root;
 #endif
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+#line 18 "hw2c.y"
+{
+    RootNode * rootNode;
+    StmtNode * stmtNode;
+    LHSNode * lhsNode;
+    RHSNode * rhsNode;
+    TRefNode * trefNode;
+    SRefNode * srefNode;
+    CListNode * clistNode;
+    AListNode * alistNode;
+    IdExprNode * idexprNode;
+    ConstNode * constNode;
+    int int_value;
+    float float_value;
+    char * string_value;
+}
+/* Line 193 of yacc.c.  */
+#line 140 "y.tab.c"
+	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -129,7 +149,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 133 "y.tab.c"
+#line 153 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -344,14 +364,14 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  8
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   68
+#define YYLAST   72
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  20
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  14
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  34
+#define YYNRULES  33
 /* YYNRULES -- Number of states.  */
 #define YYNSTATES  65
 
@@ -369,12 +389,12 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,    13,     2,     2,
-      15,    16,    11,     9,    19,    10,     2,    12,     2,     2,
+      15,    16,    11,     9,    17,    10,     2,    12,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        7,    14,     8,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    17,     2,    18,     2,     2,     2,     2,     2,     2,
+       2,    18,     2,    19,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -400,35 +420,35 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     8,    10,    15,    17,    21,    25,
-      27,    28,    32,    36,    40,    45,    49,    51,    53,    55,
-      63,    68,    72,    74,    78,    80,    84,    88,    92,    94,
-      96,   100,   105,   109,   111
+      27,    31,    35,    39,    44,    48,    50,    52,    54,    56,
+      58,    62,    64,    72,    77,    81,    83,    87,    91,    95,
+      97,    99,   103,   108
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
       21,     0,    -1,    22,    -1,    22,    23,    -1,    23,    -1,
-      24,    14,    25,     6,    -1,    27,    -1,    25,     9,    25,
-      -1,    25,    10,    25,    -1,    26,    -1,    -1,    25,    11,
-      25,    -1,    25,    12,    25,    -1,    25,    13,    25,    -1,
-      25,    12,    12,    25,    -1,    15,    25,    16,    -1,    27,
-      -1,    28,    -1,    33,    -1,     3,     7,    29,     8,    17,
-      30,    18,    -1,     3,     7,    29,     8,    -1,    29,    19,
-       5,    -1,     5,    -1,    30,    19,    31,    -1,    31,    -1,
-      32,     9,    32,    -1,    32,     9,     5,    -1,    32,    10,
-       5,    -1,    32,    -1,     3,    -1,    31,    11,     5,    -1,
-      31,    12,    12,     5,    -1,    15,    31,    16,    -1,     4,
-      -1,     5,    -1
+      24,    14,    25,     6,    -1,    29,    -1,    25,     9,    25,
+      -1,    25,    10,    25,    -1,    26,    -1,    25,    11,    25,
+      -1,    25,    12,    25,    -1,    25,    13,    25,    -1,    25,
+      12,    12,    25,    -1,    15,    25,    16,    -1,    29,    -1,
+      30,    -1,    27,    -1,     4,    -1,     5,    -1,    28,    17,
+      27,    -1,    27,    -1,     3,     7,    28,     8,    18,    31,
+      19,    -1,     3,     7,    28,     8,    -1,    31,    17,    32,
+      -1,    32,    -1,    33,     9,    33,    -1,    33,     9,     5,
+      -1,    33,    10,     5,    -1,    33,    -1,     3,    -1,    32,
+      11,     5,    -1,    32,    12,    12,     5,    -1,    15,    32,
+      16,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint16 yyrline[] =
 {
-       0,    23,    23,    31,    36,    44,    53,    60,    69,    78,
-      84,    85,    94,   103,   112,   121,   128,   135,   141,   149,
-     159,   167,   172,   179,   184,   191,   198,   204,   210,   216,
-     222,   228,   234,   243,   249
+       0,    54,    54,    62,    67,    75,    84,    91,   100,   109,
+     116,   125,   134,   143,   152,   159,   166,   172,   180,   186,
+     194,   199,   206,   216,   225,   230,   237,   247,   255,   263,
+     269,   275,   283,   291
 };
 #endif
 
@@ -438,9 +458,9 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "ID", "FLOAT", "INT", "SEMI", "'<'",
-  "'>'", "'+'", "'-'", "'*'", "'/'", "'%'", "'='", "'('", "')'", "'['",
-  "']'", "','", "$accept", "ANS", "P", "S", "LHS", "RHS", "RHS_TERM",
-  "TRef", "SRef", "CList", "AList", "IdExpr", "IdExpr_term", "Const", 0
+  "'>'", "'+'", "'-'", "'*'", "'/'", "'%'", "'='", "'('", "')'", "','",
+  "'['", "']'", "$accept", "ANS", "P", "S", "LHS", "RHS", "RHS_TERM",
+  "Const", "CList", "TRef", "SRef", "AList", "IdExpr", "IdExpr_term", 0
 };
 #endif
 
@@ -450,7 +470,7 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,    60,    62,    43,
-      45,    42,    47,    37,    61,    40,    41,    91,    93,    44
+      45,    42,    47,    37,    61,    40,    41,    44,    91,    93
 };
 # endif
 
@@ -458,18 +478,18 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    20,    21,    22,    22,    23,    24,    25,    25,    25,
-      26,    26,    26,    26,    26,    26,    26,    26,    26,    27,
-      28,    29,    29,    30,    30,    31,    31,    31,    31,    32,
-      32,    32,    32,    33,    33
+      26,    26,    26,    26,    26,    26,    26,    26,    27,    27,
+      28,    28,    29,    30,    31,    31,    32,    32,    32,    32,
+      33,    33,    33,    33
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     1,     2,     1,     4,     1,     3,     3,     1,
-       0,     3,     3,     3,     4,     3,     1,     1,     1,     7,
-       4,     3,     1,     3,     1,     3,     3,     3,     1,     1,
-       3,     4,     3,     1,     1
+       3,     3,     3,     4,     3,     1,     1,     1,     1,     1,
+       3,     1,     7,     4,     3,     1,     3,     3,     3,     1,
+       1,     3,     4,     3
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -478,19 +498,19 @@ static const yytype_uint8 yyr2[] =
 static const yytype_uint8 yydefact[] =
 {
        0,     0,     0,     2,     4,     0,     6,     0,     1,     3,
-      10,    22,     0,     0,    33,    34,    10,     0,     9,    16,
-      17,    18,     0,     0,     0,     0,     5,    10,    10,    10,
-      10,    10,     0,    21,     0,    15,     7,     8,    11,    10,
-      12,    13,    29,     0,     0,    24,    28,    20,    14,     0,
-      19,     0,     0,     0,     0,     0,    32,    23,    30,     0,
-      26,     0,    25,    27,    31
+       0,    18,    19,    21,     0,     0,     0,     0,     9,    17,
+      15,    16,     0,     0,     0,     0,     5,     0,     0,     0,
+       0,     0,     0,    20,     0,    14,     7,     8,    10,     0,
+      11,    12,    30,     0,     0,    25,    29,    23,    13,     0,
+       0,    22,     0,     0,     0,     0,    33,    24,    31,     0,
+      27,     0,    26,    28,    32
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,     4,     5,    17,    18,    19,    20,    12,
-      44,    45,    46,    21
+      -1,     2,     3,     4,     5,    17,    18,    19,    14,    20,
+      21,    44,    45,    46
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
@@ -498,20 +518,20 @@ static const yytype_int8 yydefgoto[] =
 #define YYPACT_NINF -17
 static const yytype_int8 yypact[] =
 {
-       7,    11,    25,     7,   -17,    41,   -17,    26,   -17,   -17,
-      17,   -17,    19,    47,   -17,   -17,    17,    35,   -17,   -17,
-     -17,   -17,    43,    56,    26,    40,   -17,    17,    17,    17,
-       4,    17,     2,   -17,    20,   -17,    46,    46,   -17,    17,
-     -17,   -17,   -17,     2,   -15,    23,    33,    43,   -17,   -10,
-     -17,     2,    57,    51,    21,    59,   -17,    23,   -17,    60,
-     -17,    23,    33,   -17,   -17
+       0,     3,    27,     0,   -17,    24,   -17,    50,   -17,   -17,
+      17,   -17,   -17,   -17,    23,    36,    17,    35,   -17,   -17,
+     -17,   -17,    47,    50,    50,    40,   -17,    17,    17,    17,
+       4,    17,    22,   -17,    25,   -17,    46,    46,   -17,    17,
+     -17,   -17,   -17,    22,   -13,    49,    53,    47,   -17,    18,
+      22,   -17,    59,    54,    21,    62,   -17,    49,   -17,    63,
+     -17,    49,    53,   -17,   -17
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -17,   -17,   -17,    63,   -17,   -16,   -17,    30,   -17,    44,
-     -17,   -14,    13,   -17
+     -17,   -17,   -17,    66,   -17,   -16,   -17,    -6,    48,     2,
+     -17,   -17,   -15,    16
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -521,37 +541,39 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      25,    52,    53,    50,    51,    42,    56,    13,    14,    15,
-       1,    36,    37,    38,    40,    41,    39,    43,     7,    16,
-      13,    14,    15,    48,    42,     8,    60,    22,    47,    49,
-       6,    11,    16,     6,    52,    53,    43,    57,    23,    23,
-      61,    26,    54,    55,    27,    28,    29,    30,    31,    27,
-      28,    29,    30,    31,    24,    10,    35,    29,    30,    31,
-      32,    33,    58,    59,    63,    64,     9,    62,    34
+      25,    13,     6,     1,    50,     6,    51,    15,    11,    12,
+       7,    36,    37,    38,    40,    41,    39,    33,    13,    16,
+      15,    11,    12,    48,    42,    42,    60,     8,    49,    52,
+      53,    22,    16,    47,    56,    57,    43,    43,    10,    61,
+      23,    26,    23,    24,    27,    28,    29,    30,    31,    27,
+      28,    29,    30,    31,    11,    12,    35,    29,    30,    31,
+      52,    53,    54,    55,    58,    32,    59,    63,    64,     9,
+      62,     0,    34
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int8 yycheck[] =
 {
-      16,    11,    12,    18,    19,     3,    16,     3,     4,     5,
-       3,    27,    28,    29,    30,    31,    12,    15,     7,    15,
-       3,     4,     5,    39,     3,     0,     5,     8,     8,    43,
-       0,     5,    15,     3,    11,    12,    15,    51,    19,    19,
-      54,     6,     9,    10,     9,    10,    11,    12,    13,     9,
-      10,    11,    12,    13,     7,    14,    16,    11,    12,    13,
-      17,     5,     5,    12,     5,     5,     3,    54,    24
+      16,     7,     0,     3,    17,     3,    19,     3,     4,     5,
+       7,    27,    28,    29,    30,    31,    12,    23,    24,    15,
+       3,     4,     5,    39,     3,     3,     5,     0,    43,    11,
+      12,     8,    15,     8,    16,    50,    15,    15,    14,    54,
+      17,     6,    17,     7,     9,    10,    11,    12,    13,     9,
+      10,    11,    12,    13,     4,     5,    16,    11,    12,    13,
+      11,    12,     9,    10,     5,    18,    12,     5,     5,     3,
+      54,    -1,    24
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,    21,    22,    23,    24,    27,     7,     0,    23,
-      14,     5,    29,     3,     4,     5,    15,    25,    26,    27,
-      28,    33,     8,    19,     7,    25,     6,     9,    10,    11,
-      12,    13,    17,     5,    29,    16,    25,    25,    25,    12,
-      25,    25,     3,    15,    30,    31,    32,     8,    25,    31,
-      18,    19,    11,    12,     9,    10,    16,    31,     5,    12,
-       5,    31,    32,     5,     5
+       0,     3,    21,    22,    23,    24,    29,     7,     0,    23,
+      14,     4,     5,    27,    28,     3,    15,    25,    26,    27,
+      29,    30,     8,    17,     7,    25,     6,     9,    10,    11,
+      12,    13,    18,    27,    28,    16,    25,    25,    25,    12,
+      25,    25,     3,    15,    31,    32,    33,     8,    25,    32,
+      17,    19,    11,    12,     9,    10,    16,    32,     5,    12,
+       5,    32,    33,     5,     5
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1366,309 +1388,321 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 24 "hw2c.y"
+#line 55 "hw2c.y"
     {
-			(yyval) = (yyvsp[(1) - (1)]);
-			root = (yyval);
+			(yyval.rootNode) = (yyvsp[(1) - (1)].rootNode);
+			root = (yyval.rootNode);
 		}
     break;
 
   case 3:
-#line 32 "hw2c.y"
+#line 63 "hw2c.y"
     {
-			(yyval) = (yyvsp[(1) - (2)]);
-			(yyval) -> stmtNodes.push_back((yyvsp[(2) - (2)]));
+			(yyval.rootNode) = (yyvsp[(1) - (2)].rootNode);
+			(yyval.rootNode) -> stmtNodes.push_back((yyvsp[(2) - (2)].stmtNode));
 		}
     break;
 
   case 4:
-#line 37 "hw2c.y"
+#line 68 "hw2c.y"
     {
-			(yyval) = new RootNode();
-			(yyval) -> stmtNodes.push_back((yyvsp[(1) - (1)]));
+			(yyval.rootNode) = new RootNode();
+			(yyval.rootNode) -> stmtNodes.push_back((yyvsp[(1) - (1)].stmtNode));
 		}
     break;
 
   case 5:
-#line 45 "hw2c.y"
+#line 76 "hw2c.y"
     {
-			(yyval) = new StmtNode();
-			(yyval) -> lhsNode = (yyvsp[(1) - (4)]);
-			(yyval) -> rhsNode = (yyvsp[(3) - (4)]);
-			(yyval) -> variables = getVariableVector((yyvsp[(1) - (4)]) -> tRefNode -> variables, (yyvsp[(3) - (4)]) -> variables);
+			(yyval.stmtNode) = new StmtNode();
+			(yyval.stmtNode) -> lhsNode = (yyvsp[(1) - (4)].lhsNode);
+			(yyval.stmtNode) -> rhsNode = (yyvsp[(3) - (4)].rhsNode);
+			(yyval.stmtNode) -> variables = getVariableVector((yyvsp[(1) - (4)].lhsNode) -> tRefNode -> variables, (yyvsp[(3) - (4)].rhsNode) -> variables);
 		}
     break;
 
   case 6:
-#line 54 "hw2c.y"
+#line 85 "hw2c.y"
     {
-			(yyval) = new LHS Node();
-			(yyval) -> tRefNode = (yyvsp[(1) - (1)]);
+			(yyval.lhsNode) = new LHSNode();
+			(yyval.lhsNode) -> tRefNode = (yyvsp[(1) - (1)].trefNode);
 		}
     break;
 
   case 7:
-#line 61 "hw2c.y"
+#line 92 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::binary;
-			(yyval) -> lnode = (yyvsp[(1) - (3)]);
-			(yyval) -> rnode = (yyvsp[(3) - (3)]);
-			(yyval) -> op = Operation::plus;
-			(yyval) -> variables = getVariableVector((yyvsp[(1) - (3)]) -> variables, (yyvsp[(3) - (3)]) -> variables);
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::binary;
+			(yyval.rhsNode) -> lnode = (yyvsp[(1) - (3)].rhsNode);
+			(yyval.rhsNode) -> rnode = (yyvsp[(3) - (3)].rhsNode);
+			(yyval.rhsNode) -> op = Operation::plus;
+			(yyval.rhsNode) -> variables = getVariableVector((yyvsp[(1) - (3)].rhsNode) -> variables, (yyvsp[(3) - (3)].rhsNode) -> variables);
 		}
     break;
 
   case 8:
-#line 70 "hw2c.y"
+#line 101 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::binary;
-			(yyval) -> lnode = (yyvsp[(1) - (3)]);
-			(yyval) -> rnode = (yyvsp[(3) - (3)]);
-			(yyval) -> op = Operation::minus;
-			(yyval) -> variables = getVariableVector((yyvsp[(1) - (3)]) -> variables, (yyvsp[(3) - (3)]) -> variables);
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::binary;
+			(yyval.rhsNode) -> lnode = (yyvsp[(1) - (3)].rhsNode);
+			(yyval.rhsNode) -> rnode = (yyvsp[(3) - (3)].rhsNode);
+			(yyval.rhsNode) -> op = Operation::minus;
+			(yyval.rhsNode) -> variables = getVariableVector((yyvsp[(1) - (3)].rhsNode) -> variables, (yyvsp[(3) - (3)].rhsNode) -> variables);
 		}
     break;
 
   case 9:
-#line 79 "hw2c.y"
+#line 110 "hw2c.y"
     {
-			(yyval) = (yyvsp[(1) - (1)]);
+			(yyval.rhsNode) = (yyvsp[(1) - (1)].rhsNode);
+		}
+    break;
+
+  case 10:
+#line 117 "hw2c.y"
+    {
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::binary;
+			(yyval.rhsNode) -> lnode = (yyvsp[(1) - (3)].rhsNode);
+			(yyval.rhsNode) -> rnode = (yyvsp[(3) - (3)].rhsNode);
+			(yyval.rhsNode) -> op = Operation::times;
+			(yyval.rhsNode) -> variables = getVariableVector((yyvsp[(1) - (3)].rhsNode) -> variables, (yyvsp[(3) - (3)].rhsNode) -> variables);
 		}
     break;
 
   case 11:
-#line 86 "hw2c.y"
+#line 126 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::binary;
-			(yyval) -> lnode = (yyvsp[(1) - (3)]);
-			(yyval) -> rnode = (yyvsp[(3) - (3)]);
-			(yyval) -> op = Operation::times;
-			(yyval) -> variables = getVariableVector((yyvsp[(1) - (3)]) -> variables, (yyvsp[(3) - (3)]) -> variables);
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::binary;
+			(yyval.rhsNode) -> lnode = (yyvsp[(1) - (3)].rhsNode);
+			(yyval.rhsNode) -> rnode = (yyvsp[(3) - (3)].rhsNode);
+			(yyval.rhsNode) -> op = Operation::divide;
+			(yyval.rhsNode) -> variables = getVariableVector((yyvsp[(1) - (3)].rhsNode) -> variables, (yyvsp[(3) - (3)].rhsNode) -> variables);
 		}
     break;
 
   case 12:
-#line 95 "hw2c.y"
+#line 135 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::binary;
-			(yyval) -> lnode = (yyvsp[(1) - (3)]);
-			(yyval) -> rnode = (yyvsp[(3) - (3)]);
-			(yyval) -> op = Operation::divide;
-			(yyval) -> variables = getVariableVector((yyvsp[(1) - (3)]) -> variables, (yyvsp[(3) - (3)]) -> variables);
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::binary;
+			(yyval.rhsNode) -> lnode = (yyvsp[(1) - (3)].rhsNode);
+			(yyval.rhsNode) -> rnode = (yyvsp[(3) - (3)].rhsNode);
+			(yyval.rhsNode) -> op = Operation::mod;
+			(yyval.rhsNode) -> variables = getVariableVector((yyvsp[(1) - (3)].rhsNode) -> variables, (yyvsp[(3) - (3)].rhsNode) -> variables);
 		}
     break;
 
   case 13:
-#line 104 "hw2c.y"
+#line 144 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::binary;
-			(yyval) -> lnode = (yyvsp[(1) - (3)]);
-			(yyval) -> rnode = (yyvsp[(3) - (3)]);
-			(yyval) -> op = Operation::mod;
-			(yyval) -> variables = getVariableVector((yyvsp[(1) - (3)]) -> variables, (yyvsp[(3) - (3)]) -> variables);
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::binary;
+			(yyval.rhsNode) -> lnode = (yyvsp[(1) - (4)].rhsNode);
+			(yyval.rhsNode) -> rnode = (yyvsp[(4) - (4)].rhsNode);
+			(yyval.rhsNode) -> op = Operation::floor_divide;
+			(yyval.rhsNode) -> variables = getVariableVector((yyvsp[(1) - (4)].rhsNode) -> variables, (yyvsp[(4) - (4)].rhsNode) -> variables);
 		}
     break;
 
   case 14:
-#line 113 "hw2c.y"
+#line 153 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::binary;
-			(yyval) -> lnode = (yyvsp[(1) - (4)]);
-			(yyval) -> rnode = (yyvsp[(3) - (4)]);
-			(yyval) -> op = Operation::floor_divide;
-			(yyval) -> variables = getVariableVector((yyvsp[(1) - (4)]) -> variables, (yyvsp[(3) - (4)]) -> variables);
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::uniary;
+			(yyval.rhsNode) -> lnode = (yyvsp[(2) - (3)].rhsNode);
+			(yyval.rhsNode) -> variables = (yyvsp[(2) - (3)].rhsNode) -> variables;
 		}
     break;
 
   case 15:
-#line 122 "hw2c.y"
+#line 160 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::uniary;
-			(yyval) -> lnode = (yyvsp[(2) - (3)]);
-			(yyval) -> variables = (yyvsp[(2) - (3)]) -> variables;
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::tref;
+			(yyval.rhsNode) -> tRefNode = (yyvsp[(1) - (1)].trefNode);
+			(yyval.rhsNode) -> variables = (yyvsp[(1) - (1)].trefNode) -> variables;
 		}
     break;
 
   case 16:
-#line 129 "hw2c.y"
+#line 167 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::tref;
-			(yyval) -> tRefNode = (yyvsp[(1) - (1)]);
-			(yyval) -> variables = (yyvsp[(1) - (1)]) -> variables;
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::sref;
+			(yyval.rhsNode) -> sRefNode = (yyvsp[(1) - (1)].srefNode);
 		}
     break;
 
   case 17:
-#line 136 "hw2c.y"
+#line 173 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::sref;
-			(yyval) -> sRefNode = (yyvsp[(1) - (1)]);
+			(yyval.rhsNode) = new RHSNode();
+			(yyval.rhsNode) -> type = RHSType::constref;
+			(yyval.rhsNode) -> constNode = (yyvsp[(1) - (1)].constNode);
 		}
     break;
 
   case 18:
-#line 142 "hw2c.y"
+#line 181 "hw2c.y"
     {
-			(yyval) = new RHSNode();
-			(yyval) -> type = RHSType::constref;
-			(yyval) -> constNode = (yyvsp[(1) - (1)]);
+			(yyval.constNode) = new ConstNode();
+			(yyval.constNode) -> isInt = false;
+			(yyval.constNode) -> floatVal = (yyvsp[(1) - (1)].float_value);
 		}
     break;
 
   case 19:
-#line 150 "hw2c.y"
+#line 187 "hw2c.y"
     {
-			(yyval) = new TRefNode();
-			(yyval) -> cListNode = (yyvsp[(3) - (7)]);
-			(yyval) -> aListNode = (yyvsp[(6) - (7)]);
-			(yyval) -> variables = getVariableBounds((yyvsp[(3) - (7)]), (yyvsp[(6) - (7)]));
-			// TODO: paramterIndex??
+			(yyval.constNode) = new ConstNode();
+			(yyval.constNode) -> isInt = true;
+			(yyval.constNode) -> intVal = (yyvsp[(1) - (1)].int_value);
 		}
     break;
 
   case 20:
-#line 160 "hw2c.y"
+#line 195 "hw2c.y"
     {
-			(yyval) = new SRefNode();
-			(yyval) -> cListNode = (yyvsp[(3) - (4)]);
-			// TODO: paramterIndex??
+			(yyval.clistNode) = (yyvsp[(1) - (3)].clistNode);
+			(yyvsp[(1) - (3)].clistNode) -> shape.push_back((yyvsp[(3) - (3)].constNode) -> intVal);
 		}
     break;
 
   case 21:
-#line 168 "hw2c.y"
+#line 200 "hw2c.y"
     {
-			(yyval) = (yyvsp[(1) - (3)]);
-			(yyvsp[(1) - (3)]) -> shape.push_back((yyvsp[(3) - (3)]));
+			(yyval.clistNode) = new CListNode();
+			(yyval.clistNode) -> shape.push_back((yyvsp[(1) - (1)].constNode) -> intVal);
 		}
     break;
 
   case 22:
-#line 173 "hw2c.y"
+#line 207 "hw2c.y"
     {
-			(yyval) = new CListNode();
-			(yyval) -> shape.push_back((yyvsp[(1) - (1)]));
+			(yyval.trefNode) = new TRefNode();
+			(yyval.trefNode) -> cListNode = (yyvsp[(3) - (7)].clistNode);
+			(yyval.trefNode) -> aListNode = (yyvsp[(6) - (7)].alistNode);
+			(yyval.trefNode) -> variables = getVariableBounds((yyvsp[(3) - (7)].clistNode), (yyvsp[(6) - (7)].alistNode));
+			(yyval.trefNode) -> paramterIndex = setTensorsShape((Env *)env, (yyvsp[(1) - (7)].string_value), (yyvsp[(3) - (7)].clistNode));
 		}
     break;
 
   case 23:
-#line 180 "hw2c.y"
+#line 217 "hw2c.y"
     {
-			(yyval) = (yyvsp[(1) - (3)]);
-			(yyval) -> idExprList.push_back((yyvsp[(3) - (3)]));
+			(yyval.srefNode) = new SRefNode();
+			(yyval.srefNode) -> cListNode = (yyvsp[(3) - (4)].clistNode);
+			(yyval.srefNode) -> paramterIndex = setTensorsShape((Env *)env, (yyvsp[(1) - (4)].string_value), (yyvsp[(3) - (4)].clistNode));
 		}
     break;
 
   case 24:
-#line 185 "hw2c.y"
+#line 226 "hw2c.y"
     {
-			(yyval) = new IdExprNode();
-			(yyval) -> expr = (yyvsp[(1) - (1)]);
+			(yyval.alistNode) = (yyvsp[(1) - (3)].alistNode);
+			(yyval.alistNode) -> idExprList.push_back((yyvsp[(3) - (3)].idexprNode));
 		}
     break;
 
   case 25:
-#line 192 "hw2c.y"
+#line 231 "hw2c.y"
     {
-			(yyval) = new IdExprNode();
-			(yyval) -> expr = (yyvsp[(1) - (3)]) -> expr + '+' + (yyvsp[(3) - (3)]) -> expr;
-			(yyval) -> ids.insert((yyval) -> ids.end(), (yyvsp[(1) - (3)]) -> ids.begin(), (yyvsp[(1) - (3)]) -> ids.end());
-			(yyval) -> ids.insert((yyval) -> ids.end(), (yyvsp[(3) - (3)]) -> ids.begin(), (yyvsp[(3) - (3)]) -> ids.end());
+			(yyval.alistNode) = new AListNode();
+			(yyval.alistNode) -> idExprList.push_back((yyvsp[(1) - (1)].idexprNode)); 
 		}
     break;
 
   case 26:
-#line 199 "hw2c.y"
+#line 238 "hw2c.y"
     {
-			(yyval) = new IdExprNode();
-			(yyval) -> expr = (yyvsp[(1) - (3)]) -> expr + '+' + string((yyvsp[(3) - (3)]));
-			(yyval) -> ids = (yyvsp[(1) - (3)]) -> ids;
+			(yyval.idexprNode) = new IdExprNode();
+			(yyval.idexprNode) -> expr = (yyvsp[(1) - (3)].idexprNode) -> expr + '+' + (yyvsp[(3) - (3)].idexprNode) -> expr;
+			(yyval.idexprNode) -> ids.insert((yyval.idexprNode) -> ids.end(), (yyvsp[(1) - (3)].idexprNode) -> ids.begin(), (yyvsp[(1) - (3)].idexprNode) -> ids.end());
+			(yyval.idexprNode) -> ids.insert((yyval.idexprNode) -> ids.end(), (yyvsp[(3) - (3)].idexprNode) -> ids.begin(), (yyvsp[(3) - (3)].idexprNode) -> ids.end());
+			(yyval.idexprNode) -> op.insert((yyval.idexprNode) -> op.end(), (yyvsp[(1) - (3)].idexprNode) -> op.begin(), (yyvsp[(1) - (3)].idexprNode) -> op.end());
+			(yyval.idexprNode) -> op.insert((yyval.idexprNode) -> op.end(), (yyvsp[(3) - (3)].idexprNode) -> op.begin(), (yyvsp[(3) - (3)].idexprNode) -> op.end());
+			(yyval.idexprNode) -> op.push_back(Operation::plus);
 		}
     break;
 
   case 27:
-#line 205 "hw2c.y"
+#line 248 "hw2c.y"
     {
-			(yyval) = new IdExprNode();
-			(yyval) -> expr = (yyvsp[(1) - (3)]) -> expr + '-' + string((yyvsp[(3) - (3)]));
-			(yyval) -> ids = (yyvsp[(1) - (3)]) -> ids;
+			(yyval.idexprNode) = new IdExprNode();
+			(yyval.idexprNode) -> expr = (yyvsp[(1) - (3)].idexprNode) -> expr + '+' + to_string((yyvsp[(3) - (3)].int_value));
+			(yyval.idexprNode) -> ids = (yyvsp[(1) - (3)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(1) - (3)].idexprNode) -> op;
+			(yyval.idexprNode) -> op.push_back(Operation::plus);
 		}
     break;
 
   case 28:
-#line 211 "hw2c.y"
+#line 256 "hw2c.y"
     {
-			(yyval) = (yyvsp[(1) - (1)]);
+			(yyval.idexprNode) = new IdExprNode();
+			(yyval.idexprNode) -> expr = (yyvsp[(1) - (3)].idexprNode) -> expr + '-' + to_string((yyvsp[(3) - (3)].int_value));
+			(yyval.idexprNode) -> ids = (yyvsp[(1) - (3)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(1) - (3)].idexprNode) -> op;
+			(yyval.idexprNode) -> op.push_back(Operation::minus);
 		}
     break;
 
   case 29:
-#line 217 "hw2c.y"
+#line 264 "hw2c.y"
     {
-			(yyval) = new IdExprNode();
-			(yyval) -> expr = (yyvsp[(1) - (1)]);
-			(yyval) -> ids.push_back((yyvsp[(1) - (1)]));
+			(yyval.idexprNode) = (yyvsp[(1) - (1)].idexprNode);
 		}
     break;
 
   case 30:
-#line 223 "hw2c.y"
+#line 270 "hw2c.y"
     {
-			(yyval) = new IdExprNode();
-			(yyval) -> expr = (yyvsp[(1) - (3)]) -> expr + '*' + string((yyvsp[(3) - (3)]));
-			(yyval) -> ids = (yyvsp[(1) - (3)]) -> ids;
+			(yyval.idexprNode) = new IdExprNode();
+			(yyval.idexprNode) -> expr = (yyvsp[(1) - (1)].string_value);
+			(yyval.idexprNode) -> ids.push_back((yyvsp[(1) - (1)].string_value));
 		}
     break;
 
   case 31:
-#line 229 "hw2c.y"
+#line 276 "hw2c.y"
     {
-			(yyval) = new IdExprNode();
-			(yyval) -> expr = (yyvsp[(1) - (4)]) -> expr + '/' + string((yyvsp[(3) - (4)]));
-			(yyval) -> ids = (yyvsp[(1) - (4)]) -> ids;
+			(yyval.idexprNode) = new IdExprNode();
+			(yyval.idexprNode) -> expr = (yyvsp[(1) - (3)].idexprNode) -> expr + '*' + to_string((yyvsp[(3) - (3)].int_value));
+			(yyval.idexprNode) -> ids = (yyvsp[(1) - (3)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(1) - (3)].idexprNode) -> op;
+			(yyval.idexprNode) -> op.push_back(Operation::times);
 		}
     break;
 
   case 32:
-#line 235 "hw2c.y"
+#line 284 "hw2c.y"
     {
-			(yyval) = new IdExprNode();
-			(yyval) -> expr = '(' + (yyvsp[(2) - (3)]) -> expr + ')';
-			(yyval) -> ids = (yyvsp[(1) - (3)]) -> ids;
-			delete (yyvsp[(2) - (3)]);
+			(yyval.idexprNode) = new IdExprNode();
+			(yyval.idexprNode) -> expr = (yyvsp[(1) - (4)].idexprNode) -> expr + '/' + to_string((yyvsp[(4) - (4)].int_value));
+			(yyval.idexprNode) -> ids = (yyvsp[(1) - (4)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(1) - (4)].idexprNode) -> op;
+			(yyval.idexprNode) -> op.push_back(Operation::floor_divide);
 		}
     break;
 
   case 33:
-#line 244 "hw2c.y"
+#line 292 "hw2c.y"
     {
-			(yyval) = new ConstNode();
-			(yyval) -> isInt = false;
-			(yyval) -> floatVal = (yyvsp[(1) - (1)]);
-		}
-    break;
-
-  case 34:
-#line 250 "hw2c.y"
-    {
-			(yyval) = new ConstNode();
-			(yyval) -> isInt = true;
-			(yyval) -> floatVal = (yyvsp[(1) - (1)]);
+			(yyval.idexprNode) = new IdExprNode();
+			(yyval.idexprNode) -> expr = '(' + (yyvsp[(2) - (3)].idexprNode) -> expr + ')';
+			(yyval.idexprNode) -> ids = (yyvsp[(2) - (3)].idexprNode) -> ids;
+			(yyval.idexprNode) -> op = (yyvsp[(2) - (3)].idexprNode) -> op;
+			delete (yyvsp[(2) - (3)].idexprNode);
 		}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1672 "y.tab.c"
+#line 1706 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1882,4 +1916,9 @@ yyreturn:
 }
 
 
+#line 301 "hw2c.y"
 
+
+void yyerror(char *msg){
+	fprintf(stderr,"Error:  %s\n",msg);
+}
