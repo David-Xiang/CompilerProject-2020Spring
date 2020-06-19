@@ -1,14 +1,24 @@
 # Compiler Proj Part2 Report
 
-## 小组成员
+## 小组成员及分工
 
 谢欣彤、黄凯旋、赖其梁、向东伟
 
-## 设计思路
+分工<br>
+谢欣彤：前端处理部分<br>
+黄凯旋：自动求导算法设计及初步实现<br>
+赖其梁：自动求导算法debug<br>
+向东伟：后端修改维护（左值下标化简）<br>
+
+## 设计思路及实现
 
 本组作业延续Part 1的思路，对编译器前端及后端进行改造。
 
-……（待填充）
+经过Part 1中完成的前端处理后，我们得到了一棵语法树，本阶段的任务是在这个基础上，增加pass生成新的表达式树，使其能够自动计算梯度。
+
+Part 2任务的完成主要分为两步，第一步自顶向下遍历原语法树，生成与梯度相关的新表达式树；第二步进行左值下标的化简以满足题目的要求。
+
+整个project过程中，我们借助lex工具完成了词法分析，借助yacc工具进行语法分析并建立了原始的adt，再通过多个pass完成了计算梯度及优化下标等任务，最终生成了目标c代码。
 
 ## 构建计算梯度的表达式树
 
@@ -124,3 +134,20 @@ public:
 1. 生成loop时，循环变量的替换
 2. 在多重loop内层，新增一个if，用于限制被替换变量的范围
 3. 在复制表达式中替换相应变量
+
+##实验结果
+
+	Case 1 Success!
+	Case 2 Success!
+	Case 3 Success!
+	Case 4 Success!
+	Case 5 Success!
+	Case 6 Success!
+	Case 7 Success!
+	Case 8 Wrong answer
+	Case 9 Success!
+	Case 10 Success!
+	Totally pass 9 out of 10 cases.
+	Score is 14.25.
+	
+四只大四狗通力合作没有放弃最后的project，但为了不辱大四狗身份还是留下了一个WA的Case作为纪念。
