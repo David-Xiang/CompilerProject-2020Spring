@@ -17,35 +17,47 @@ AListNode * _fork_AListNode(AListNode * source)
     {
         dest->idExprList.push_back(new IdExprNode(*source->idExprList[i]));
         cout<<".."<<endl;
-
+        // if (dest->idExprList[i]->op.size()==1) {
+        //     cout<<dest->idExprList[i]->ids[0];
+        //     cout<<get_op_string(dest->idExprList[i]->op[0]);
+        //     cout<<dest->idExprList[i]->num[0];
+        // }
     }
     return dest;
 }
 
-
+TRefNode * _fork_TRefNode(TRefNode * source)
+{
+    if (source == NULL) return NULL;
+    cout<<"+"<<endl;
+    TRefNode * dest = new TRefNode(*source);
+    dest->aListNode = _fork_AListNode(source->aListNode);
+    cout<<"+"<<endl;
+    return dest;
+}
 
 RHSNode * _fork_RHSNode(RHSNode * source)
-{   
+{
     if (source == NULL) return NULL;
     RHSNode * dest = new RHSNode(*source);
     switch (source->type)
-        {
+    {
         case RHSType::binary:
             dest -> lnode = _fork_RHSNode(source->lnode);
             dest -> rnode = _fork_RHSNode(source->rnode);
             break;
-
+            
         case RHSType::uniary:
             dest -> lnode = _fork_RHSNode(source->lnode);
             break;
-
+            
         case RHSType::tref:
             dest -> tRefNode = _fork_TRefNode(source->tRefNode);
             break;
-        
+            
         default:
             break;
-        }
+    }
     return dest;
 }
 
@@ -86,25 +98,25 @@ RootNode * gen_grad_root(Env & env, RootNode & root)
         RHSNode * curr = myqueue.front();  myqueue.pop();
         switch (curr->type)
         {
-        case RHSType::binary:
-            myqueue.push(curr->lnode);
-            myqueue.push(curr->rnode);
-            break;
-
-        case RHSType::uniary:
-            myqueue.push(curr->lnode);
-            break;
-
-        case RHSType::tref:
-            if (env.tensors[curr->tRefNode->paramterIndex].require_grad)
-            {
-                cout<<curr->gradNode<<endl;
-                grad_root->stmtNodes.push_back(_fork(curr->gradNode));
-            }
-            break;
-        
-        default:
-            break;
+            case RHSType::binary:
+                myqueue.push(curr->lnode);
+                myqueue.push(curr->rnode);
+                break;
+                
+            case RHSType::uniary:
+                myqueue.push(curr->lnode);
+                break;
+                
+            case RHSType::tref:
+                if (env.tensors[curr->tRefNode->paramterIndex].require_grad)
+                {
+                    cout<<curr->gradNode<<endl;
+                    grad_root->stmtNodes.push_back(_fork(curr->gradNode));
+                }
+                break;
+                
+            default:
+                break;
         }
     }
     return grad_root;
@@ -147,7 +159,7 @@ void backprop(Env& env, RHSNode& RHS)
                     RHS.lnode->gradNode = _fork(RHS.gradNode);
                     RHS.rnode->gradNode = _fork(RHS.gradNode);
                     break;
-                        
+                    
                 case Operation::minus:
                     RHS.lnode->gradNode = _fork(RHS.gradNode);
                     RHS.rnode->gradNode = new StmtNode();
@@ -161,25 +173,25 @@ void backprop(Env& env, RHSNode& RHS)
                     RHS.rnode->gradNode->rhsNode->lnode->constNode->isInt = true;
                     RHS.rnode->gradNode->rhsNode->lnode->constNode->intVal = -1;
                     break;
-
+                    
                 case Operation::times:
                     RHS.lnode->gradNode = new StmtNode();
                     RHS.lnode->gradNode->rhsNode = new RHSNode();
                     RHS.rnode->gradNode = new StmtNode();
                     RHS.rnode->gradNode->rhsNode = new RHSNode();
-                        
+                    
                     RHS.lnode->gradNode->rhsNode->type = RHSType::binary;
                     RHS.lnode->gradNode->rhsNode->op = Operation::times;
                     RHS.lnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
                     RHS.lnode->gradNode->rhsNode->rnode = RHS.rnode;
-
+                    
                     RHS.rnode->gradNode->rhsNode->type = RHSType::binary;
                     RHS.rnode->gradNode->rhsNode->op = Operation::times;
                     RHS.rnode->gradNode->rhsNode->lnode = RHS.gradNode->rhsNode;
                     RHS.rnode->gradNode->rhsNode->rnode = RHS.lnode;
-                    // Merge Variable ! 
+                    // Merge Variable !
                     break;
-                        
+                    
                 case Operation::divide:
                 {
                     RHS.lnode->gradNode = new StmtNode();
@@ -198,7 +210,7 @@ void backprop(Env& env, RHSNode& RHS)
                     // RHS.rnode->gradNode->rhsNode->lnode->constNode = new ConstNode;
                     // RHS.rnode->gradNode->rhsNode->lnode->constNode->isInt = true;
                     // RHS.rnode->gradNode->rhsNode->lnode->constNode->intVal = -1;
-
+                    
                     // RHSNode* mynode = new RHSNode;
                     // mynode->type = RHSType::binary;
                     // mynode->op = Operation::divide;
@@ -212,19 +224,19 @@ void backprop(Env& env, RHSNode& RHS)
                     // RHS.rnode->gradNode->rhsNode->rnode = mynode;
                     break;
                 }
-
+                    
                 default:
                     cerr<<"Not Implemented!"<<endl;
                     break;
             }
-
+            
             RHS.lnode->gradNode->variables = RHS.gradNode->variables;
             RHS.rnode->gradNode->variables = RHS.gradNode->variables;
             backprop(env, *RHS.lnode);
             backprop(env, *RHS.rnode);
-        break;
+            break;
         }
-
+            
         case RHSType::uniary:
         {
             RHS.lnode->gradNode = RHS.gradNode;
@@ -232,7 +244,7 @@ void backprop(Env& env, RHSNode& RHS)
             backprop(env, *RHS.lnode);
             break;
         }
-
+            
         case RHSType::tref:
         {
             if (env.tensors[RHS.tRefNode->paramterIndex].require_grad)
@@ -242,7 +254,7 @@ void backprop(Env& env, RHSNode& RHS)
             }
             break;
         }
-        
+            
         default:
         {
             break;
