@@ -17,24 +17,12 @@ AListNode * _fork_AListNode(AListNode * source)
     {
         dest->idExprList.push_back(new IdExprNode(*source->idExprList[i]));
         cout<<".."<<endl;
-        // if (dest->idExprList[i]->op.size()==1) {
-        //     cout<<dest->idExprList[i]->ids[0];
-        //     cout<<get_op_string(dest->idExprList[i]->op[0]);
-        //     cout<<dest->idExprList[i]->num[0];
-        // }
+
     }
     return dest;
 }
 
-TRefNode * _fork_TRefNode(TRefNode * source)
-{
-    if (source == NULL) return NULL;
-    cout<<"+"<<endl;
-    TRefNode * dest = new TRefNode(*source);
-    dest->aListNode = _fork_AListNode(source->aListNode);
-    cout<<"+"<<endl;
-    return dest;
-}
+
 
 RHSNode * _fork_RHSNode(RHSNode * source)
 {   

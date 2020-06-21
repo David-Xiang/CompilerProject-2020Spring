@@ -1,0 +1,789 @@
+State 62 conflicts: 2 reduce/reduce
+
+
+Grammar
+
+    0 $accept: ANS $end
+
+    1 ANS: P
+
+    2 P: P S
+    3  | S
+
+    4 S: LHS '=' RHS SEMI
+
+    5 LHS: TRef
+
+    6 RHS: RHS '+' RHS
+    7    | RHS '-' RHS
+    8    | RHS_TERM
+
+    9 RHS_TERM: RHS '*' RHS
+   10         | RHS '/' RHS
+   11         | RHS '%' RHS
+   12         | RHS '/' '/' RHS
+   13         | '(' RHS ')'
+   14         | TRef
+   15         | SRef
+   16         | Const
+
+   17 Const: FLOAT
+   18      | INT
+
+   19 CList: CList ',' Const
+   20      | Const
+
+   21 TRef: ID '<' CList '>' '[' AList ']'
+
+   22 SRef: ID '<' CList '>'
+
+   23 AList: AList ',' IdExpr
+   24      | IdExpr
+
+   25 IdExpr: IdExpr_term '+' IdExpr_term
+   26       | IdExpr_term '+' INT
+   27       | IdExpr_term '-' INT
+   28       | IdExpr_term
+
+   29 IdExpr_term: ID
+   30            | IdExpr '*' INT
+   31            | IdExpr '/' '/' INT
+   32            | '(' IdExpr ')'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'%' (37) 11
+'(' (40) 13 32
+')' (41) 13 32
+'*' (42) 9 30
+'+' (43) 6 25 26
+',' (44) 19 23
+'-' (45) 7 27
+'/' (47) 10 12 31
+'<' (60) 21 22
+'=' (61) 4
+'>' (62) 21 22
+'[' (91) 21
+']' (93) 21
+error (256)
+ID (258) 21 22 29
+FLOAT (259) 17
+INT (260) 18 26 27 30 31
+SEMI (261) 4
+
+
+Nonterminals, with rules where they appear
+
+$accept (20)
+    on left: 0
+ANS (21)
+    on left: 1, on right: 0
+P (22)
+    on left: 2 3, on right: 1 2
+S (23)
+    on left: 4, on right: 2 3
+LHS (24)
+    on left: 5, on right: 4
+RHS (25)
+    on left: 6 7 8, on right: 4 6 7 9 10 11 12 13
+RHS_TERM (26)
+    on left: 9 10 11 12 13 14 15 16, on right: 8
+Const (27)
+    on left: 17 18, on right: 16 19 20
+CList (28)
+    on left: 19 20, on right: 19 21 22
+TRef (29)
+    on left: 21, on right: 5 14
+SRef (30)
+    on left: 22, on right: 15
+AList (31)
+    on left: 23 24, on right: 21 23
+IdExpr (32)
+    on left: 25 26 27 28, on right: 23 24 30 31 32
+IdExpr_term (33)
+    on left: 29 30 31 32, on right: 25 26 27 28
+
+
+state 0
+
+    0 $accept: . ANS $end
+
+    ID  shift, and go to state 1
+
+    ANS   go to state 2
+    P     go to state 3
+    S     go to state 4
+    LHS   go to state 5
+    TRef  go to state 6
+
+
+state 1
+
+   21 TRef: ID . '<' CList '>' '[' AList ']'
+
+    '<'  shift, and go to state 7
+
+
+state 2
+
+    0 $accept: ANS . $end
+
+    $end  shift, and go to state 8
+
+
+state 3
+
+    1 ANS: P .
+    2 P: P . S
+
+    ID  shift, and go to state 1
+
+    $default  reduce using rule 1 (ANS)
+
+    S     go to state 9
+    LHS   go to state 5
+    TRef  go to state 6
+
+
+state 4
+
+    3 P: S .
+
+    $default  reduce using rule 3 (P)
+
+
+state 5
+
+    4 S: LHS . '=' RHS SEMI
+
+    '='  shift, and go to state 10
+
+
+state 6
+
+    5 LHS: TRef .
+
+    $default  reduce using rule 5 (LHS)
+
+
+state 7
+
+   21 TRef: ID '<' . CList '>' '[' AList ']'
+
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+
+    Const  go to state 13
+    CList  go to state 14
+
+
+state 8
+
+    0 $accept: ANS $end .
+
+    $default  accept
+
+
+state 9
+
+    2 P: P S .
+
+    $default  reduce using rule 2 (P)
+
+
+state 10
+
+    4 S: LHS '=' . RHS SEMI
+
+    ID     shift, and go to state 15
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+    '('    shift, and go to state 16
+
+    RHS       go to state 17
+    RHS_TERM  go to state 18
+    Const     go to state 19
+    TRef      go to state 20
+    SRef      go to state 21
+
+
+state 11
+
+   17 Const: FLOAT .
+
+    $default  reduce using rule 17 (Const)
+
+
+state 12
+
+   18 Const: INT .
+
+    $default  reduce using rule 18 (Const)
+
+
+state 13
+
+   20 CList: Const .
+
+    $default  reduce using rule 20 (CList)
+
+
+state 14
+
+   19 CList: CList . ',' Const
+   21 TRef: ID '<' CList . '>' '[' AList ']'
+
+    '>'  shift, and go to state 22
+    ','  shift, and go to state 23
+
+
+state 15
+
+   21 TRef: ID . '<' CList '>' '[' AList ']'
+   22 SRef: ID . '<' CList '>'
+
+    '<'  shift, and go to state 24
+
+
+state 16
+
+   13 RHS_TERM: '(' . RHS ')'
+
+    ID     shift, and go to state 15
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+    '('    shift, and go to state 16
+
+    RHS       go to state 25
+    RHS_TERM  go to state 18
+    Const     go to state 19
+    TRef      go to state 20
+    SRef      go to state 21
+
+
+state 17
+
+    4 S: LHS '=' RHS . SEMI
+    6 RHS: RHS . '+' RHS
+    7    | RHS . '-' RHS
+    9 RHS_TERM: RHS . '*' RHS
+   10         | RHS . '/' RHS
+   11         | RHS . '%' RHS
+   12         | RHS . '/' '/' RHS
+
+    SEMI  shift, and go to state 26
+    '+'   shift, and go to state 27
+    '-'   shift, and go to state 28
+    '*'   shift, and go to state 29
+    '/'   shift, and go to state 30
+    '%'   shift, and go to state 31
+
+
+state 18
+
+    8 RHS: RHS_TERM .
+
+    $default  reduce using rule 8 (RHS)
+
+
+state 19
+
+   16 RHS_TERM: Const .
+
+    $default  reduce using rule 16 (RHS_TERM)
+
+
+state 20
+
+   14 RHS_TERM: TRef .
+
+    $default  reduce using rule 14 (RHS_TERM)
+
+
+state 21
+
+   15 RHS_TERM: SRef .
+
+    $default  reduce using rule 15 (RHS_TERM)
+
+
+state 22
+
+   21 TRef: ID '<' CList '>' . '[' AList ']'
+
+    '['  shift, and go to state 32
+
+
+state 23
+
+   19 CList: CList ',' . Const
+
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+
+    Const  go to state 33
+
+
+state 24
+
+   21 TRef: ID '<' . CList '>' '[' AList ']'
+   22 SRef: ID '<' . CList '>'
+
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+
+    Const  go to state 13
+    CList  go to state 34
+
+
+state 25
+
+    6 RHS: RHS . '+' RHS
+    7    | RHS . '-' RHS
+    9 RHS_TERM: RHS . '*' RHS
+   10         | RHS . '/' RHS
+   11         | RHS . '%' RHS
+   12         | RHS . '/' '/' RHS
+   13         | '(' RHS . ')'
+
+    '+'  shift, and go to state 27
+    '-'  shift, and go to state 28
+    '*'  shift, and go to state 29
+    '/'  shift, and go to state 30
+    '%'  shift, and go to state 31
+    ')'  shift, and go to state 35
+
+
+state 26
+
+    4 S: LHS '=' RHS SEMI .
+
+    $default  reduce using rule 4 (S)
+
+
+state 27
+
+    6 RHS: RHS '+' . RHS
+
+    ID     shift, and go to state 15
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+    '('    shift, and go to state 16
+
+    RHS       go to state 36
+    RHS_TERM  go to state 18
+    Const     go to state 19
+    TRef      go to state 20
+    SRef      go to state 21
+
+
+state 28
+
+    7 RHS: RHS '-' . RHS
+
+    ID     shift, and go to state 15
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+    '('    shift, and go to state 16
+
+    RHS       go to state 37
+    RHS_TERM  go to state 18
+    Const     go to state 19
+    TRef      go to state 20
+    SRef      go to state 21
+
+
+state 29
+
+    9 RHS_TERM: RHS '*' . RHS
+
+    ID     shift, and go to state 15
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+    '('    shift, and go to state 16
+
+    RHS       go to state 38
+    RHS_TERM  go to state 18
+    Const     go to state 19
+    TRef      go to state 20
+    SRef      go to state 21
+
+
+state 30
+
+   10 RHS_TERM: RHS '/' . RHS
+   12         | RHS '/' . '/' RHS
+
+    ID     shift, and go to state 15
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+    '/'    shift, and go to state 39
+    '('    shift, and go to state 16
+
+    RHS       go to state 40
+    RHS_TERM  go to state 18
+    Const     go to state 19
+    TRef      go to state 20
+    SRef      go to state 21
+
+
+state 31
+
+   11 RHS_TERM: RHS '%' . RHS
+
+    ID     shift, and go to state 15
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+    '('    shift, and go to state 16
+
+    RHS       go to state 41
+    RHS_TERM  go to state 18
+    Const     go to state 19
+    TRef      go to state 20
+    SRef      go to state 21
+
+
+state 32
+
+   21 TRef: ID '<' CList '>' '[' . AList ']'
+
+    ID   shift, and go to state 42
+    '('  shift, and go to state 43
+
+    AList        go to state 44
+    IdExpr       go to state 45
+    IdExpr_term  go to state 46
+
+
+state 33
+
+   19 CList: CList ',' Const .
+
+    $default  reduce using rule 19 (CList)
+
+
+state 34
+
+   19 CList: CList . ',' Const
+   21 TRef: ID '<' CList . '>' '[' AList ']'
+   22 SRef: ID '<' CList . '>'
+
+    '>'  shift, and go to state 47
+    ','  shift, and go to state 23
+
+
+state 35
+
+   13 RHS_TERM: '(' RHS ')' .
+
+    $default  reduce using rule 13 (RHS_TERM)
+
+
+state 36
+
+    6 RHS: RHS . '+' RHS
+    6    | RHS '+' RHS .
+    7    | RHS . '-' RHS
+    9 RHS_TERM: RHS . '*' RHS
+   10         | RHS . '/' RHS
+   11         | RHS . '%' RHS
+   12         | RHS . '/' '/' RHS
+
+    '*'  shift, and go to state 29
+    '/'  shift, and go to state 30
+    '%'  shift, and go to state 31
+
+    $default  reduce using rule 6 (RHS)
+
+
+state 37
+
+    6 RHS: RHS . '+' RHS
+    7    | RHS . '-' RHS
+    7    | RHS '-' RHS .
+    9 RHS_TERM: RHS . '*' RHS
+   10         | RHS . '/' RHS
+   11         | RHS . '%' RHS
+   12         | RHS . '/' '/' RHS
+
+    '*'  shift, and go to state 29
+    '/'  shift, and go to state 30
+    '%'  shift, and go to state 31
+
+    $default  reduce using rule 7 (RHS)
+
+
+state 38
+
+    6 RHS: RHS . '+' RHS
+    7    | RHS . '-' RHS
+    9 RHS_TERM: RHS . '*' RHS
+    9         | RHS '*' RHS .
+   10         | RHS . '/' RHS
+   11         | RHS . '%' RHS
+   12         | RHS . '/' '/' RHS
+
+    $default  reduce using rule 9 (RHS_TERM)
+
+
+state 39
+
+   12 RHS_TERM: RHS '/' '/' . RHS
+
+    ID     shift, and go to state 15
+    FLOAT  shift, and go to state 11
+    INT    shift, and go to state 12
+    '('    shift, and go to state 16
+
+    RHS       go to state 48
+    RHS_TERM  go to state 18
+    Const     go to state 19
+    TRef      go to state 20
+    SRef      go to state 21
+
+
+state 40
+
+    6 RHS: RHS . '+' RHS
+    7    | RHS . '-' RHS
+    9 RHS_TERM: RHS . '*' RHS
+   10         | RHS . '/' RHS
+   10         | RHS '/' RHS .
+   11         | RHS . '%' RHS
+   12         | RHS . '/' '/' RHS
+
+    $default  reduce using rule 10 (RHS_TERM)
+
+
+state 41
+
+    6 RHS: RHS . '+' RHS
+    7    | RHS . '-' RHS
+    9 RHS_TERM: RHS . '*' RHS
+   10         | RHS . '/' RHS
+   11         | RHS . '%' RHS
+   11         | RHS '%' RHS .
+   12         | RHS . '/' '/' RHS
+
+    $default  reduce using rule 11 (RHS_TERM)
+
+
+state 42
+
+   29 IdExpr_term: ID .
+
+    $default  reduce using rule 29 (IdExpr_term)
+
+
+state 43
+
+   32 IdExpr_term: '(' . IdExpr ')'
+
+    ID   shift, and go to state 42
+    '('  shift, and go to state 43
+
+    IdExpr       go to state 49
+    IdExpr_term  go to state 46
+
+
+state 44
+
+   21 TRef: ID '<' CList '>' '[' AList . ']'
+   23 AList: AList . ',' IdExpr
+
+    ','  shift, and go to state 50
+    ']'  shift, and go to state 51
+
+
+state 45
+
+   24 AList: IdExpr .
+   30 IdExpr_term: IdExpr . '*' INT
+   31            | IdExpr . '/' '/' INT
+
+    '*'  shift, and go to state 52
+    '/'  shift, and go to state 53
+
+    $default  reduce using rule 24 (AList)
+
+
+state 46
+
+   25 IdExpr: IdExpr_term . '+' IdExpr_term
+   26       | IdExpr_term . '+' INT
+   27       | IdExpr_term . '-' INT
+   28       | IdExpr_term .
+
+    '+'  shift, and go to state 54
+    '-'  shift, and go to state 55
+
+    $default  reduce using rule 28 (IdExpr)
+
+
+state 47
+
+   21 TRef: ID '<' CList '>' . '[' AList ']'
+   22 SRef: ID '<' CList '>' .
+
+    '['  shift, and go to state 32
+
+    $default  reduce using rule 22 (SRef)
+
+
+state 48
+
+    6 RHS: RHS . '+' RHS
+    7    | RHS . '-' RHS
+    9 RHS_TERM: RHS . '*' RHS
+   10         | RHS . '/' RHS
+   11         | RHS . '%' RHS
+   12         | RHS . '/' '/' RHS
+   12         | RHS '/' '/' RHS .
+
+    $default  reduce using rule 12 (RHS_TERM)
+
+
+state 49
+
+   30 IdExpr_term: IdExpr . '*' INT
+   31            | IdExpr . '/' '/' INT
+   32            | '(' IdExpr . ')'
+
+    '*'  shift, and go to state 52
+    '/'  shift, and go to state 53
+    ')'  shift, and go to state 56
+
+
+state 50
+
+   23 AList: AList ',' . IdExpr
+
+    ID   shift, and go to state 42
+    '('  shift, and go to state 43
+
+    IdExpr       go to state 57
+    IdExpr_term  go to state 46
+
+
+state 51
+
+   21 TRef: ID '<' CList '>' '[' AList ']' .
+
+    $default  reduce using rule 21 (TRef)
+
+
+state 52
+
+   30 IdExpr_term: IdExpr '*' . INT
+
+    INT  shift, and go to state 58
+
+
+state 53
+
+   31 IdExpr_term: IdExpr '/' . '/' INT
+
+    '/'  shift, and go to state 59
+
+
+state 54
+
+   25 IdExpr: IdExpr_term '+' . IdExpr_term
+   26       | IdExpr_term '+' . INT
+
+    ID   shift, and go to state 42
+    INT  shift, and go to state 60
+    '('  shift, and go to state 43
+
+    IdExpr       go to state 61
+    IdExpr_term  go to state 62
+
+
+state 55
+
+   27 IdExpr: IdExpr_term '-' . INT
+
+    INT  shift, and go to state 63
+
+
+state 56
+
+   32 IdExpr_term: '(' IdExpr ')' .
+
+    $default  reduce using rule 32 (IdExpr_term)
+
+
+state 57
+
+   23 AList: AList ',' IdExpr .
+   30 IdExpr_term: IdExpr . '*' INT
+   31            | IdExpr . '/' '/' INT
+
+    '*'  shift, and go to state 52
+    '/'  shift, and go to state 53
+
+    $default  reduce using rule 23 (AList)
+
+
+state 58
+
+   30 IdExpr_term: IdExpr '*' INT .
+
+    $default  reduce using rule 30 (IdExpr_term)
+
+
+state 59
+
+   31 IdExpr_term: IdExpr '/' '/' . INT
+
+    INT  shift, and go to state 64
+
+
+state 60
+
+   26 IdExpr: IdExpr_term '+' INT .
+
+    $default  reduce using rule 26 (IdExpr)
+
+
+state 61
+
+   30 IdExpr_term: IdExpr . '*' INT
+   31            | IdExpr . '/' '/' INT
+
+    '*'  shift, and go to state 52
+    '/'  shift, and go to state 53
+
+
+state 62
+
+   25 IdExpr: IdExpr_term . '+' IdExpr_term
+   25       | IdExpr_term '+' IdExpr_term .
+   26       | IdExpr_term . '+' INT
+   27       | IdExpr_term . '-' INT
+   28       | IdExpr_term .
+
+    '+'  shift, and go to state 54
+    '-'  shift, and go to state 55
+
+    '*'       reduce using rule 25 (IdExpr)
+    '*'       [reduce using rule 28 (IdExpr)]
+    '/'       reduce using rule 25 (IdExpr)
+    '/'       [reduce using rule 28 (IdExpr)]
+    $default  reduce using rule 25 (IdExpr)
+
+
+state 63
+
+   27 IdExpr: IdExpr_term '-' INT .
+
+    $default  reduce using rule 27 (IdExpr)
+
+
+state 64
+
+   31 IdExpr_term: IdExpr '/' '/' INT .
+
+    $default  reduce using rule 31 (IdExpr_term)
